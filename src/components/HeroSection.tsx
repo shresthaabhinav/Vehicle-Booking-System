@@ -25,7 +25,7 @@ export default function HeroSection() {
 
       </motion.div>
 
-      <motion.button whileHover={{ scale }} className="bg-white text-black rounded-full font-semibold shadow-xl">
+      <motion.button whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }} className="mt-12 px-10 py-4 bg-white text-black rounded-full font-semibold shadow-xl">
         Book Now
       </motion.button>
       </div>
