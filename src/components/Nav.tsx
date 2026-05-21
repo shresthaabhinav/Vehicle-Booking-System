@@ -1,17 +1,19 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'motion/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import AuthModal from './AuthModal'
 
 const Nav_Items=["Home", "Bookings", "About Us", "Contact"]
 
 export default function Nav() {
 
   const pathName = usePathname()
-
+  const [ authOpen, setAuthOpen ] = useState(false)
   return (
+    <>
     <motion.div initial={{ y: -60, opacity: 0 }}
     animate={{ y:0, opacity: 1 }}
     className={`fixed top-3 left-1/2 -translate-x-1/2 w-[94%] md:w-[86%] z-50 rounded-full bg-[#0B0B0B] text-white shadow-[0_15px_50px_rgba(0,0,0,0.7)] py-3`}>
@@ -32,11 +34,13 @@ export default function Nav() {
           return <Link key={index} href={href} className={`text-sm font-medium transition ${active ? "text-white" : "text-gray-400 hover:text-white"}`}>{i}</Link>
         })}
       </div>
-        <button className='px-4 p-1.5 rounded-full bg-white text-black text-sm'>
+        <button className='px-4 p-1.5 rounded-full bg-white text-black text-sm' onClick={()=>setAuthOpen(true)}>
           Login
         </button>
       </div>
       
     </motion.div>
+      <AuthModal open={authOpen} onClose={()=>setAuthOpen(false)}/>
+        </>
   )
 }
