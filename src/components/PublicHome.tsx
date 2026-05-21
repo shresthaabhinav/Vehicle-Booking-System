@@ -6,7 +6,7 @@ import VehicleSlider from "./VehicleSlider";
 
 export default function PublicHome() {
   
-    const [ authOpen, setAuthOpen ] = useState(false)
+    const [ authOpen, setAuthOpen ] = useState(true)
 
     return (
     <>
