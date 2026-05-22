@@ -103,7 +103,7 @@ export default function AuthModal({ open, onClose }: propType) {
                         </button>
                       </div>
 
-                      <p className="mt-6 text-center text-sm text-gray-500">Don't have an account? <div onClick={()=>setStep("signup")} className="text-black font-medium hover:underline">Sign Up</div></p>
+                      <p className="mt-6 text-center text-sm text-gray-500">Don't have an account? <span onClick={()=>setStep("signup")} className="text-black font-medium hover:underline">Sign Up</span></p>
                     </motion.div>
                   )}
                   {step == "signup" && (
@@ -129,12 +129,13 @@ export default function AuthModal({ open, onClose }: propType) {
                         <input type="password" placeholder="Password" className="w-full bg-transparent outline-none text-sm" onChange={(e)=>setPassword(e.target.value)} value={password}/>
                         </div>
 
+                        {error && <p className="text-red-500">{error}</p>}
                         <button className="w-full h-11 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition flex justify-center items-center" disabled={loading} onClick={handleSignUp}>
                           {!loading?"Sign Up": <CircleDashed size={18} color='white' className="animate-spin"/>}
                         </button>
                       </div>
 
-                      <p className="mt-6 text-center text-sm text-gray-500">Don't have an account? <div onClick={()=>setStep("login")} className="text-black font-medium hover:underline">Login</div></p>
+                      <p className="mt-6 text-center text-sm text-gray-500">Don't have an account? <span onClick={()=>setStep("login")} className="text-black font-medium hover:underline">Login</span></p>
                     </motion.div>
                   )}
                 </div>
