@@ -4,7 +4,10 @@ interface IUser extends Document{
     name: string;
     email: string;
     password?: string;
-    role: "user" | "partner" | "admin"
+    role: "user" | "partner" | "admin";
+    isEmailVerified: Boolean;
+    otp?:string;
+    otpExpiresAt?: Date;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -26,6 +29,16 @@ role:{
     type:String,
     default: "user",
     enum: ["user", "partner", "admin"]
+},
+isEmailVerified:{
+    type:Boolean,
+    default:false
+},
+otp:{
+    type:String
+},
+otpExpiresAt:{
+    type:Date
 }
 
 },{timestamps: true})
