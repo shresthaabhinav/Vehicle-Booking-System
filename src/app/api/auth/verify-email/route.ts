@@ -43,5 +43,15 @@ export async function POST(req: Request) {
 
     await user.save()
 
-  } catch (error) {}
+    return Response.json(
+        { message: "email is verified" },
+        { status: 200 },
+    );
+
+  } catch (error) {
+    return Response.json(
+        { message: `verify email error ${error}` },
+        { status: 500 },
+    );
+  }
 }
