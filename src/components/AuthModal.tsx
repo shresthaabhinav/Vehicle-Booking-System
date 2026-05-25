@@ -13,7 +13,7 @@ type propType = {
 type stepType = "login" | "signup" | "otp";
 
 export default function AuthModal({ open, onClose }: propType) {
-  const [step, setStep] = useState<stepType>("otp");
+  const [step, setStep] = useState<stepType>("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,12 +30,30 @@ export default function AuthModal({ open, onClose }: propType) {
         password,
       });
       console.log(data);
+      setError("")
       setStep("otp")
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
       setError(error.response.data.message ?? "Something went wrong");
       console.log(error.response.data.message);
+    }
+  };
+
+  const handleVerifyEmail = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.post("/api/auth/verify-email", {
+        email,
+        otp:otp.join('')
+      });
+      setOtp(["", "", "", "", "", ""])
+      setError("")
+      setStep("login")
+      setLoading(false);
+    } catch (error: any) {
+      setLoading(false);
+      setError(error.response.data.message ?? "Something went wrong");
     }
   };
 
@@ -267,8 +285,19 @@ export default function AuthModal({ open, onClose }: propType) {
                           />
                         ))}
                       </div>
-                      <button className="mt-6 w-full h-11 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition">
-                        Verify and Create Account
+
+                      {error && <p className="text-red-500">{error}</p>}
+
+                      <button className="mt-6 w-full h-11 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition" onClick={handleVerifyEmail}>
+                        {!loading ? (
+                            "Verify OTP and Create Account"
+                          ) : (
+                            <CircleDashed
+                              size={18}
+                              color="white"
+                              className="animate-spin"
+                            />
+                          )}
                       </button>
                     </motion.div>
                   )}

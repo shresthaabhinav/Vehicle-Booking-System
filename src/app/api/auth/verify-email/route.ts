@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (user.otpExpiresAt || user.otpExpiresAt < new Date()) {
+    if (!user.otpExpiresAt || user.otpExpiresAt < new Date()) {
       return Response.json(
         { message: "otp has been expired" },
         { status: 400 },
