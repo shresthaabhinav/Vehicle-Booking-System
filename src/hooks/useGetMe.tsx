@@ -14,8 +14,13 @@ export default function useGetMe(enabled:boolean) {
         return 
     }
     const getMe = async ()=>{
-        const {data} = await axios.get('/api/user/me')
-        dispatch(setUserData(data))
+        try{
+            const {data} = await axios.get('/api/user/me')
+            dispatch(setUserData(data))
+        }catch(error){
+            console.log(error)
+        }
+        
     }
     getMe()
   },[enabled])

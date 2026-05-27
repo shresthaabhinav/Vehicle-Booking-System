@@ -5,6 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import AuthModal from './AuthModal'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/redux/store'
 
 const Nav_Items=["Home", "Bookings", "About Us", "Contact"]
 
@@ -12,6 +14,8 @@ export default function Nav() {
 
   const pathName = usePathname()
   const [ authOpen, setAuthOpen ] = useState(false)
+  const { userData } = useSelector((state: RootState)=>state.user)
+
   return (
     <>
     <motion.div initial={{ y: -60, opacity: 0 }}
@@ -34,9 +38,24 @@ export default function Nav() {
           return <Link key={index} href={href} className={`text-sm font-medium transition ${active ? "text-white" : "text-gray-400 hover:text-white"}`}>{i}</Link>
         })}
       </div>
-        <button className='px-4 p-1.5 rounded-full bg-white text-black text-sm' onClick={()=>setAuthOpen(true)}>
+      <div className='flex items-center gap-3 relative'>
+
+        <div className='hidden md:block relative'>
+          {!userData ? (
+            <button className='px-4 p-1.5 rounded-full bg-white text-black text-sm' onClick={()=>setAuthOpen(true)}>
           Login
         </button>
+          ):(
+            <>
+            <button className='w-11 h-11 rounded-full bg-white text-black font-bold'>
+              {userData.name.charAt(0).toUpperCase()}
+            </button>
+            </>
+          )}
+        </div>
+        
+      </div>
+
       </div>
       
     </motion.div>

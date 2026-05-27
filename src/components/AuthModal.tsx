@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { CircleDashed, Lock, Mail, User, X } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
@@ -18,7 +18,7 @@ export default function AuthModal({ open, onClose }: propType) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState();
+  const [error, setError] = useState<string | null>(null);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 
   const handleSignUp = async () => {
@@ -81,9 +81,9 @@ export default function AuthModal({ open, onClose }: propType) {
     if (value && index < otp.length - 1) {
       document.getElementById(`otp-${index + 1}`)?.focus();
     }
-    if (!value && index > otp.length - 1) {
-      document.getElementById(`otp-${index - 1}`)?.focus();
-    }
+    if (!value && index > 0) {
+  document.getElementById(`otp-${index - 1}`)?.focus();
+}
   };
 
   return (
