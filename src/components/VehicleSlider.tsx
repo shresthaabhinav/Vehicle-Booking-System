@@ -60,7 +60,7 @@ export default function VehicleSlider() {
   }
 
   return (
-    <div className="w-full h-[200vh] bg-white py-20 px-4 overflow-hidden">
+    <div className="w-full bg-white py-20 px-4 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -102,6 +102,7 @@ export default function VehicleSlider() {
           <div className="hidden sm:flex items-center gap-2">
             <motion.div
               whileTap={{ scale: 0.88 }}
+              onClick={()=>scroll("left")}
               className="w-11 h-11 rounded-2xl border border-zinc-200 bg-white flex items-center justify-center hover:bg-zinc-900 hover:border-zinc-900 hover:text-white disabled:opacity-25 disabled:hover:bg-white disabled:hover:text-zinc-900 disabled:hover:border-zinc-200 transition-all text-zinc-700 shadow-sm"
             >
               <ChevronLeft size={18} strokeWidth={2.5} />
@@ -109,6 +110,7 @@ export default function VehicleSlider() {
 
             <motion.div
               whileTap={{ scale: 0.88 }}
+              onClick={()=>scroll("right")}
               className="w-11 h-11 rounded-2xl border border-zinc-200 bg-white flex items-center justify-center hover:bg-zinc-900 hover:border-zinc-900 hover:text-white disabled:opacity-25 disabled:hover:bg-white disabled:hover:text-zinc-900 disabled:hover:border-zinc-200 transition-all text-zinc-700 shadow-sm"
             >
               <ChevronRight size={18} strokeWidth={2.5} />
@@ -203,6 +205,28 @@ export default function VehicleSlider() {
             })}
           </div>
         </div>
+
+        <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ delay: 0.7 }}
+        className="flex items-center gap-6 mt-8 pt-6 border-t border-zinc-100"
+        >
+        {
+          [
+            { num: "6+", label: "Categories" },
+            { num: "10+", label: "Vehicle types" },
+            { num: "24/7", label: "Availability" },
+          ].map((d,i)=>(
+            <div key={i} className="flex items-center gap-3">
+              <p className="text-zinc-900 text-lg font-black tracking-tight">{d.num}</p>
+              <p className="text-zinc-400 text-xs font-medium">{d.label}</p>
+            </div>
+          ))
+        }
+
+        </motion.div>
+
       </div>
     </div>
   );
