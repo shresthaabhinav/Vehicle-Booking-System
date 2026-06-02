@@ -16,7 +16,7 @@ export default function page() {
     const router = useRouter()
     const [ vehicleType, setVehicleType ] = useState("")
     return (
-    <div className='min-h-screen bg-white flex item-center justify-center px-4'>
+    <div className='min-h-screen bg-white flex items-center justify-center px-4'>
       <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
@@ -47,22 +47,41 @@ export default function page() {
             <p className='text-xs font-semibold text-gray-500 mb-3'>Vehicle Type</p>
 
             <div className='grid grid-cols-2 sm:grid-cols-3 gap-3'>
-              {VEHICLES.map((v,i)=>(
+              {VEHICLES.map((v,i)=>{
 
                 const Icon = v.icon
-                const active = vehicleType == v.id
+                const active = vehicleType === v.id
+                
                 return(
                   <motion.div
                     key={v.id}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.96 }}
                     onClick={()=> setVehicleType(v.id)}
-                    className={`rounded-2xl border p-4 flex flex-col items-center gap-2 transition ${active ? "bg-black text-white border-black" : "border-gray-200 hover:border-black"}`}
+                    className={`rounded-2xl border p-4 flex flex-col items-center gap-2 transition
+                      ${active 
+                      ? "bg-black text-white border-black" 
+                      : "border-gray-200 hover:border-black"
+                    }`}
                   >
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center ${active ? "bg-white text-black" : "bg-black text-white"}`}>
+                      <Icon/>
+                    </div>
+
+                    <div className='text-sm font-semibold'>
+                      {v.label}
+                    </div>
+
+                    <p className={`text-xs ${active
+                       ? "text-gray-300" 
+                       : "text-gray-500"
+                       }`}>
+                      {v.desc}
+                    </p>
 
                   </motion.div>
                 )
-              ))}
+              })}
             </div>
           </div>
         </div>
