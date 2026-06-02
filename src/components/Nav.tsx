@@ -94,7 +94,7 @@ export default function Nav() {
                             {userData.role}
                           </p>
                           {userData.role != "partner" && (
-                            <div className="w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl">
+                            <div className="w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer" onClick={() => router.push("/partner/onboarding/vehicle")}>
                               <div className="flex -space-x-2">
                                 <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
                                   <Bike size={14} />
@@ -106,8 +106,9 @@ export default function Nav() {
                                   <Truck size={14} />
                                 </div>
                               </div>
+                              <div>
                               Become a Partner
-                              <div></div>
+                              </div>
                               <ChevronRight size={16} className="ml-auto" />
                             </div>
                           )}
@@ -237,8 +238,9 @@ export default function Nav() {
                         <Truck size={14} />
                       </div>
                     </div>
+                    <div>
                     Become a Partner
-                    <div></div>
+                    </div>
                     <ChevronRight size={16} className="ml-auto" />
                   </div>
                 )}

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
 
 const PUBLIC_ROUTES = ["/"];
-const PUBLIC_APIS = ["/api/auth"];
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -17,7 +16,7 @@ export async function proxy(req: NextRequest) {
   if (PUBLIC_ROUTES.includes(pathname)) {
     return NextResponse.next();
   }
-  if (PUBLIC_APIS.includes(pathname)) {
+  if (pathname.startsWith("/api/auth")) {
     return NextResponse.next();
   }
 
@@ -36,9 +35,8 @@ export async function proxy(req: NextRequest) {
   }
 
   if (pathname.startsWith("/partner")) {
-    
-    if (pathname.startsWith("/partner/onboarding")){
-      return NextResponse.next()
+    if (pathname.startsWith("/partner/onboarding")) {
+      return NextResponse.next();
     }
     if (role != "partner") {
       return NextResponse.redirect(new URL("/", req.url));
@@ -56,9 +54,9 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
-export const config={
-    matcher:["/((?!_next/static|_next/image|favicon.ico).*)"]
-}
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+};
