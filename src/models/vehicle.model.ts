@@ -1,12 +1,11 @@
 import mongoose from "mongoose";
 
-type vehicleType={
+type vehicleType=
     "bike" |
     "car"  |
     "loading" |
     "truck" |
     "auto"
-}
 
 interface IVehicle{
     owner: mongoose.Types.ObjectId
@@ -62,3 +61,6 @@ const vehicleSchema = new mongoose.Schema<IVehicle>({
     },
 
 },{ timestamps: true })
+
+const Vehicle=mongoose.models.Vehicle || mongoose.model("Vehicle",vehicleSchema)
+export default Vehicle
