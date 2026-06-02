@@ -1,30 +1,31 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import { motion } from 'motion/react'
-import { ArrowLeft, Bike, Car, Package, Truck } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import React, { useState } from "react";
+import { motion } from "motion/react";
+import { ArrowLeft, Bike, Car, Package, Truck } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const VEHICLES = [
-  { id: 'bike', label: 'Bike', icon: Bike, desc: '2 wheeler' },
-  { id: 'auto', label: 'Auto', icon: Car, desc: '3 wheeler ride' },
-  { id: 'car', label: 'Car', icon: Car, desc: '4 wheeler ride' },
-  { id: 'loading', label: 'Loading', icon: Package, desc: 'Small goods' },
-  { id: 'truck', label: 'Truck', icon: Truck, desc: 'Heavy Transport' },
-]
+  { id: "bike", label: "Bike", icon: Bike, desc: "2 wheeler" },
+  { id: "auto", label: "Auto", icon: Car, desc: "3 wheeler ride" },
+  { id: "car", label: "Car", icon: Car, desc: "4 wheeler ride" },
+  { id: "loading", label: "Loading", icon: Package, desc: "Small goods" },
+  { id: "truck", label: "Truck", icon: Truck, desc: "Heavy Transport" },
+];
 
 export default function Page() {
-    const router = useRouter()
-    const [ vehicleType, setVehicleType ] = useState("")
-    const [ vehicleNumber, setVehicleNumber ] = useState("")
+  const router = useRouter();
+  const [vehicleType, setVehicleType] = useState("");
+  const [vehicleNumber, setVehicleNumber] = useState("");
+  const [vehicleModel, setVehicleModel] = useState("");
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="w-full max-w-xl bg-white rounded-3xl border border-gray-200 shadow-[0_25px_70px_rgba(0,0,0,0.15)] p-6 sm:p-8"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-xl bg-white rounded-3xl border border-gray-200 shadow-[0_25px_70px_rgba(0,0,0,0.15)] p-6 sm:p-8"
       >
         <div className="relative text-center">
           <button
@@ -38,9 +39,9 @@ export default function Page() {
 
           <h1 className="text-2xl font-bold mt-1">Vehicle Details</h1>
 
-            <p className="text-sm text-gray-500 mt-2">
-              Add your vehicle information
-            </p>
+          <p className="text-sm text-gray-500 mt-2">
+            Add your vehicle information
+          </p>
         </div>
 
         <div className="mt-8 space-y-6">
@@ -51,8 +52,8 @@ export default function Page() {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {VEHICLES.map((v) => {
-                const Icon = v.icon
-                const active = vehicleType === v.id
+                const Icon = v.icon;
+                const active = vehicleType === v.id;
 
                 return (
                   <motion.div
@@ -63,16 +64,16 @@ export default function Page() {
                     className={`group cursor-pointer rounded-2xl border p-4 flex flex-col items-center gap-2 transition-all duration-200
                       ${
                         active
-                          ? 'bg-black text-white border-black'
-                          : 'bg-white text-black border-gray-200 hover:bg-black hover:text-white hover:border-black'
+                          ? "bg-black text-white border-black"
+                          : "bg-white text-black border-gray-200 hover:bg-black hover:text-white hover:border-black"
                       }`}
                   >
                     <div
                       className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200
                         ${
                           active
-                            ? 'bg-white text-black'
-                            : 'bg-black text-white group-hover:bg-white group-hover:text-black'
+                            ? "bg-white text-black"
+                            : "bg-black text-white group-hover:bg-white group-hover:text-black"
                         }`}
                     >
                       <Icon size={20} />
@@ -84,24 +85,55 @@ export default function Page() {
                       className={`text-xs transition-colors duration-200
                         ${
                           active
-                            ? 'text-gray-300'
-                            : 'text-gray-500 group-hover:text-gray-300'
+                            ? "text-gray-300"
+                            : "text-gray-500 group-hover:text-gray-300"
                         }`}
                     >
                       {v.desc}
                     </p>
                   </motion.div>
-                )
+                );
               })}
             </div>
           </div>
 
           <div>
-             <label htmlFor="vn" className='text-xs font-semibold text-gray-500'>Vehicle Number</label>
-             <input type="text" placeholder='BAA0107' id="vn" className='mt-2 w-full border-b border-gray-300 pb-2 text-sm focus:outline-none focus:border-black transition'/>
+            <label htmlFor="vn" className="text-xs font-semibold text-gray-500">
+              Vehicle Number
+            </label>
+            <input
+              type="text"
+              onChange={(e) => setVehicleNumber(e.target.value)}
+              value={vehicleNumber}
+              placeholder="BAA0107"
+              id="vn"
+              className="mt-2 w-full border-b border-gray-300 pb-2 text-sm focus:outline-none focus:border-black transition"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="vm" className="text-xs font-semibold text-gray-500">
+              Vehicle Model
+            </label>
+            <input
+              type="text"
+              onChange={(e) => setVehicleModel(e.target.value)}
+              value={vehicleModel}
+              placeholder="Hyundai Creta"
+              id="vm"
+              className="mt-2 w-full border-b border-gray-300 pb-2 text-sm focus:outline-none focus:border-black transition"
+            />
           </div>
         </div>
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          className="mt-8 w-full h-14 rounded-2xl bg-black text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-40 transition"
+        >
+          Continue
+        </motion.button>
       </motion.div>
     </div>
-  )
+  );
 }
