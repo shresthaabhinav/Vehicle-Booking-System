@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import { motion } from 'motion/react'
-import { ArrowLeft, BadgeCheck } from 'lucide-react'
+import { ArrowLeft, BadgeCheck, CheckCircle, CreditCard, Landmark, Phone } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 export default function page() {
@@ -42,32 +42,54 @@ export default function page() {
           </div>
 
           <div>
-            <label htmlFor="ahn" className='text-xs font-semibold text-gray-500'>Account holder name</label>
+            <label htmlFor="ahn" className='text-xs font-semibold text-gray-500'>Bank account number</label>
 
             <div className='flex items-center gap-2 mt-2'>
-              <div className='text-gray-400'><BadgeCheck/></div>
-              <input type="text" placeholder='As per bank records' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'/>
+              <div className='text-gray-400'><CreditCard/></div>
+              <input type="text" placeholder='Enter account number' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'/>
             </div>
           </div>
 
           <div>
-            <label htmlFor="ahn" className='text-xs font-semibold text-gray-500'>Account holder name</label>
+            <label htmlFor="ahn" className='text-xs font-semibold text-gray-500'>Bank code</label>
 
             <div className='flex items-center gap-2 mt-2'>
-              <div className='text-gray-400'><BadgeCheck/></div>
-              <input type="text" placeholder='As per bank records' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'/>
+              <div className='text-gray-400'><Landmark/></div>
+              <input type="text" placeholder='GLBBNPKA' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'/>
             </div>
           </div>
 
           <div>
-            <label htmlFor="ahn" className='text-xs font-semibold text-gray-500'>Account holder name</label>
+            <label htmlFor="ahn" className='text-xs font-semibold text-gray-500'>Mobile number</label>
 
             <div className='flex items-center gap-2 mt-2'>
-              <div className='text-gray-400'><BadgeCheck/></div>
-              <input type="text" placeholder='As per bank records' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'/>
+              <div className='text-gray-400'><Phone/></div>
+              <input type="text" placeholder='10 digit mobile number' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'/>
             </div>
           </div>
+
+          <div>
+            <label htmlFor="ahn" className='text-xs font-semibold text-gray-500'>Wallet (optional)</label>
+
+            <div className='flex items-center gap-2 mt-2'>
+              <input type="text" placeholder='eSewa / Khalti / IME Pay number' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'/>
+            </div>
+          </div>
+
         </div>
+
+        <div className='mt-6 flex items-start gap-3 text-xs text-gray-500'>
+            <CheckCircle size={16} className='mt-0.5'/>
+            <p>Bank details are verified before first payout. This usually takes 24-48 hours.</p>
+        </div>
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          className='mt-8 w-full h-14 rounded-2xl bg-black text-white font-semibold disabled:opacity-40 transition'
+        >
+          Continue
+        </motion.button>
 
       </motion.div>
     </div>
