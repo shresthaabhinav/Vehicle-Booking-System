@@ -1,4 +1,5 @@
 import mongoose, { Document } from "mongoose";
+import { number } from "motion";
 
 export interface IUser extends Document {
     name: string;
@@ -8,6 +9,7 @@ export interface IUser extends Document {
     isEmailVerified: boolean;
     otp?: string;
     otpExpiresAt?: Date;
+    partnerOnBoardingSteps: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -33,6 +35,12 @@ const userSchema = new mongoose.Schema<IUser>({
     isEmailVerified: {
         type: Boolean,
         default: false
+    },
+    partnerOnBoardingSteps:{
+        type: Number,
+        min: 0,
+        max: 8,
+        default: 0
     },
     otp: {
         type: String
