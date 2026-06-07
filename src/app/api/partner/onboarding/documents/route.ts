@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import uploadOnCloudinary from "@/lib/cloudinary";
 import connectDb from "@/lib/db";
 import User from "@/models/user.model";
 import { NextRequest } from "next/server";
@@ -33,6 +34,20 @@ export async function POST(req: NextRequest){
             return Response.json({ messag: "all documents are required"}
                 ,{ status: 400 }
             )
+        }
+
+        const updatePayload: any={
+            status:"pending"
+        }
+
+        if(citizenship){
+            const url = await uploadOnCloudinary(citizenship)
+            if(!url){
+                return Response.json({ messag: "Citizenship documents upload failed"}
+                ,{ status: 500 }
+            )
+            }
+            updatePayload.citizenshipUrl = url
         }
     } catch(error){
 
