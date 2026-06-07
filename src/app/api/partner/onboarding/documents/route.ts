@@ -26,9 +26,14 @@ export async function POST(req: NextRequest){
         const formData = await req.formData()
 
         const citizenship = formData.get("citizen") as Blob | null
+        const license = formData.get("license") as Blob | null
+        const rc = formData.get("rc") as Blob | null
 
-        const citizenship = formData.get("citizen") as Blob | null
-
+        if( !citizenship || !license || !rc ){
+            return Response.json({ messag: "all documents are required"}
+                ,{ status: 400 }
+            )
+        }
     } catch(error){
 
     }
