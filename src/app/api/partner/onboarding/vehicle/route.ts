@@ -94,9 +94,16 @@ export async function GET(req:NextRequest){
                 , { status: 400 });
         }
 
-        let vehicle = await Vehicle.findOne({ owner: session.user.id });
+        let vehicle = await Vehicle.findOne({ owner: user.id });
+
+        if(vehicle){
+          return Response.json(vehicle, { status: 200 })
+        }else{
+          return null
+        }
 
     }catch(error){
-
+          return Response.json({ message: `get vehicle error ${error}`},
+          { status: 500 })
     }
 }
