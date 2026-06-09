@@ -19,13 +19,16 @@ export default function Page() {
   const [vehicleType, setVehicleType] = useState("");
   const [vehicleNumber, setVehicleNumber] = useState("");
   const [vehicleModel, setVehicleModel] = useState("");
+  const [loading, setLoading] = useState("");
+  const [error, setError] = useState("");
 
   const handleVehicle = async ()=>{
     try{
       const { data } = await axios.post('api/partner/onboarding/vehicle', 
         { type: vehicleType, number: vehicleNumber, vehicleModel })
         console.log(data)
-    }catch(error){
+    }catch(error:any){
+        setError(error?.response?.data?.message ?? "something went wrong")
         console.log(error)
     }
   }
@@ -135,7 +138,7 @@ export default function Page() {
             />
           </div>
         </div>
-
+        {error && <p className="text-red-500 mt-4">*{error}</p>}
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
