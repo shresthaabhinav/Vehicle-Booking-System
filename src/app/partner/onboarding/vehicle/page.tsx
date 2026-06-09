@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, Bike, Car, Package, Truck } from "lucide-react";
+import { ArrowLeft, Bike, Car, CircleDashed, Package, Truck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
@@ -19,17 +19,20 @@ export default function Page() {
   const [vehicleType, setVehicleType] = useState("");
   const [vehicleNumber, setVehicleNumber] = useState("");
   const [vehicleModel, setVehicleModel] = useState("");
-  const [loading, setLoading] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleVehicle = async ()=>{
+    setError("")
     try{
+      setLoading(true)
       const { data } = await axios.post('api/partner/onboarding/vehicle', 
         { type: vehicleType, number: vehicleNumber, vehicleModel })
-        console.log(data)
+        setLoading(false)
     }catch(error:any){
         setError(error?.response?.data?.message ?? "something went wrong")
         console.log(error)
+        setLoading(false)
     }
   }
   return (
@@ -142,10 +145,11 @@ export default function Page() {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
+          disabled={loading}
           className="mt-8 w-full h-14 rounded-2xl bg-black text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-40 transition"
           onClick={handleVehicle}
         >
-          Continue
+          {loading?<CircleDashed className="text-white animate-spin"/>:"Continue"}
         </motion.button>
       </motion.div>
     </div>

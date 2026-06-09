@@ -1,11 +1,40 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'motion/react'
 import { ArrowLeft, FileCheck, UploadCloud } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import axios from 'axios'
+
+type docsType = "citizenship" | "license" | "rc"
 
 export default function page() {
   const router = useRouter();
+  const [docs, setDocs] = useState<Record<docsType,File | null>>({
+    citizenship: null,
+    license: null,
+    rc: null
+  })
+
+  const handleDocs = async ()=>{
+    try{
+
+      const formdata = new FormData()
+      if(!docs.citizenship || !docs.license || !docs.rc){
+        return null
+      }
+      formdata.append("citizenship",docs?.citizenship)
+      formdata.append("license",docs?.license)
+      formdata.append("rc",docs?.rc)
+
+      const {data} = await axios.post("/api/partner/onboarding/documents",formdata)
+      console.log(data)
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+
+
   return (
     <div className='min-h-screen bg-white flex items-center justify-center px-4'>
       <motion.div
@@ -44,6 +73,9 @@ export default function page() {
               <span className='text-xs text-gray-400'>Upload</span>
               <div className='w-10 h-10 rounded-full bg-black text-white flex items-center justify-center'><UploadCloud/></div>
             </div>
+
+          <input type="file" hidden accept="image/*,.pdf" onChange={(e)=>handleImage("citizenship",e.target?.files?.[0] || null)}/>
+
           </motion.label>
 
           <motion.label
@@ -58,6 +90,9 @@ export default function page() {
               <span className='text-xs text-gray-400'>Upload</span>
               <div className='w-10 h-10 rounded-full bg-black text-white flex items-center justify-center'><UploadCloud/></div>
             </div>
+
+          <input type="file" hidden accept="/image,.pdf" onChange={(e)=>handleImage("license",e.target?.files?.[0] || null)}/>
+
           </motion.label>
 
           <motion.label
@@ -74,6 +109,8 @@ export default function page() {
             </div>
           </motion.label>
 
+          <input type="file" hidden accept="/image,.pdf" onChange={(e)=>handleImage("rc",e.target?.files?.[0] || null)}/>
+
         </div>
 
         <div className='mt-6 flex items-start gap-3 text-xs text-gray-500'>
@@ -84,6 +121,7 @@ export default function page() {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
+          onClick={handleDocs}
           className='mt-8 w-full h-14 rounded-2xl bg-black text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-40 transition'
         >
           Continue
