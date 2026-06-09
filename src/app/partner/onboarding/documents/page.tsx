@@ -33,7 +33,12 @@ export default function page() {
     }
   }
 
-
+  const handleImage=(doc:docsType,file:File | null)=>{
+    if(!file){
+      return
+    }
+    setDocs((prev) => ({...prev, [doc]:file,}));
+  }
 
   return (
     <div className='min-h-screen bg-white flex items-center justify-center px-4'>
