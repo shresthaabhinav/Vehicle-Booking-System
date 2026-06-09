@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, Bike, Car, Package, Truck } from "lucide-react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const VEHICLES = [
   { id: "bike", label: "Bike", icon: Bike, desc: "2 wheeler" },
@@ -19,6 +20,15 @@ export default function Page() {
   const [vehicleNumber, setVehicleNumber] = useState("");
   const [vehicleModel, setVehicleModel] = useState("");
 
+  const handleVehicle = async ()=>{
+    try{
+      const { data } = await axios.post('api/partner/onboarding/vehicle', 
+        { type: vehicleType, number: vehicleNumber, vehicleModel })
+        console.log(data)
+    }catch(error){
+        console.log(error)
+    }
+  }
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <motion.div
@@ -103,7 +113,7 @@ export default function Page() {
             </label>
             <input
               type="text"
-              onChange={(e) => setVehicleNumber(e.target.value)}
+              onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())}
               value={vehicleNumber}
               placeholder="BAA0107"
               id="vn"
@@ -130,6 +140,7 @@ export default function Page() {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
           className="mt-8 w-full h-14 rounded-2xl bg-black text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-40 transition"
+          onClick={handleVehicle}
         >
           Continue
         </motion.button>
