@@ -24,9 +24,15 @@ export default function Page() {
 
   const handleVehicle = async ()=>{
     setError("")
+
+    if (!vehicleType) {
+      setError("Select a vehicle type")
+      return
+    }
+
     try{
       setLoading(true)
-      const { data } = await axios.post('api/partner/onboarding/vehicle', 
+      const { data } = await axios.post('/api/partner/onboarding/vehicle', 
         { type: vehicleType, number: vehicleNumber, vehicleModel })
         setLoading(false)
     }catch(error:any){

@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (VEHICLE_REGEX.test(number)) {
+    if (!VEHICLE_REGEX.test(number)) {
       return Response.json(
         { message: "Invalid Vehicle Number Format" },
         { status: 400 },

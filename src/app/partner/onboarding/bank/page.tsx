@@ -1,12 +1,37 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'motion/react'
-import { ArrowLeft, BadgeCheck, CheckCircle, CreditCard, Landmark, Phone } from 'lucide-react'
+import { ArrowLeft, BadgeCheck, CheckCircle, CircleDashed, CreditCard, Landmark, Phone } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import axios from 'axios'
 
 export default function page() {
 
   const router = useRouter()
+  const [accountHolder, setAccountHolder] = useState("")
+  const [accountNumber, setAccountNumber] = useState("")
+  const [ifsc, setIfsc] = useState("")
+  const [upi, setUpi] = useState("")
+  const [mobileNumber, setMobileNumber] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+
+  const handleBank=async ()=>{
+      setLoading(true)
+      setError("")
+      try{
+        const {data} = await axios.post("/api/partner/onboarding/bank",{
+          accountHolder, accountNumber, ifsc, upi, mobileNumber
+        })
+        console.log(data)
+        setLoading(false)
+      }catch(error){
+        setError(error?.response?.data?.message || "something went wrong")
+        console.log(error)
+        setLoading(false)
+      }
+  }
+
   return (
     <div className='min-h-screen bg-white flex items-center justify-center px-4'>
       <motion.div
@@ -37,7 +62,7 @@ export default function page() {
 
             <div className='flex items-center gap-2 mt-2'>
               <div className='text-gray-400'><BadgeCheck/></div>
-              <input type="text" placeholder='As per bank records' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'/>
+              <input type="text" placeholder='As per bank records' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black' value={accountHolder} onChange={(e)=>setAccountHolder(e.target.value)}/>
             </div>
           </div>
 
@@ -46,7 +71,7 @@ export default function page() {
 
             <div className='flex items-center gap-2 mt-2'>
               <div className='text-gray-400'><CreditCard/></div>
-              <input type="text" placeholder='Enter account number' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'/>
+              <input type="text" placeholder='Enter account number' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black' value={accountNumber} onChange={(e)=>setAccountNumber(e.target.value)}/>
             </div>
           </div>
 
@@ -55,7 +80,7 @@ export default function page() {
 
             <div className='flex items-center gap-2 mt-2'>
               <div className='text-gray-400'><Landmark/></div>
-              <input type="text" placeholder='GLBBNPKA' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'/>
+              <input type="text" placeholder='GLBBNPKA' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black' value={ifsc} onChange={(e)=>setIfsc(e.target.value)}/>
             </div>
           </div>
 
@@ -64,7 +89,7 @@ export default function page() {
 
             <div className='flex items-center gap-2 mt-2'>
               <div className='text-gray-400'><Phone/></div>
-              <input type="text" placeholder='10 digit mobile number' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'/>
+              <input type="text" placeholder='10 digit mobile number' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black' value={mobileNumber} onChange={(e)=>setMobileNumber(e.target.value)}/>
             </div>
           </div>
 
@@ -72,7 +97,7 @@ export default function page() {
             <label htmlFor="ahn" className='text-xs font-semibold text-gray-500'>Wallet (optional)</label>
 
             <div className='flex items-center gap-2 mt-2'>
-              <input type="text" placeholder='eSewa / Khalti / IME Pay number' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'/>
+              <input type="text" placeholder='eSewa / Khalti / IME Pay number' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black' value={upi} onChange={(e)=>setUpi(e.target.value)}/>
             </div>
           </div>
 
@@ -82,13 +107,16 @@ export default function page() {
             <CheckCircle size={16} className='mt-0.5'/>
             <p>Bank details are verified before first payout. This usually takes 24-48 hours.</p>
         </div>
+        {error && <p className="text-red-500 mt-4">*{error}</p>}
 
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
+          onClick={handleBank}
+          disabled={loading}
           className='mt-8 w-full h-14 rounded-2xl bg-black text-white font-semibold disabled:opacity-40 transition'
         >
-          Continue
+        {loading?<CircleDashed className="text-white animate-spin"/>:"Continue"}
         </motion.button>
 
       </motion.div>

@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import { motion } from 'motion/react'
-import { ArrowLeft, FileCheck, UploadCloud } from 'lucide-react'
+import { ArrowLeft, CircleDashed, FileCheck, UploadCloud } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
 
@@ -15,11 +15,19 @@ export default function page() {
     rc: null
   })
 
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+
   const handleDocs = async ()=>{
+    setLoading(true)
+    setError("")
+
     try{
 
       const formdata = new FormData()
       if(!docs.citizenship || !docs.license || !docs.rc){
+          setError("all documents are required")
+          setLoading(false)
         return null
       }
       formdata.append("citizenship",docs?.citizenship)
@@ -27,9 +35,11 @@ export default function page() {
       formdata.append("rc",docs?.rc)
 
       const {data} = await axios.post("/api/partner/onboarding/documents",formdata)
-      console.log(data)
-    }catch(error){
+      setLoading(false)
+    }catch(error:any){
+      setError(error?.response?.data?.message ?? "Something went wrong")
       console.log(error)
+      setLoading(false)
     }
   }
 
@@ -96,7 +106,7 @@ export default function page() {
               <div className='w-10 h-10 rounded-full bg-black text-white flex items-center justify-center'><UploadCloud/></div>
             </div>
 
-          <input type="file" hidden accept="/image,.pdf" onChange={(e)=>handleImage("license",e.target?.files?.[0] || null)}/>
+          <input type="file" hidden accept="image/*,.pdf" onChange={(e)=>handleImage("license",e.target?.files?.[0] || null)}/>
 
           </motion.label>
 
@@ -112,9 +122,10 @@ export default function page() {
               <span className='text-xs text-gray-400'>Upload</span>
               <div className='w-10 h-10 rounded-full bg-black text-white flex items-center justify-center'><UploadCloud/></div>
             </div>
-          </motion.label>
 
-          <input type="file" hidden accept="/image,.pdf" onChange={(e)=>handleImage("rc",e.target?.files?.[0] || null)}/>
+          <input type="file" hidden accept="image/*,.pdf" onChange={(e)=>handleImage("rc",e.target?.files?.[0] || null)}/>
+          
+          </motion.label>
 
         </div>
 
@@ -122,14 +133,16 @@ export default function page() {
           <FileCheck size={16} className='mt-0.5'/>
           <p>Documents are securely stored and mannually verified by our team.</p>
         </div>
+        {error && <p className="text-red-500 mt-4">*{error}</p>}
 
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
           onClick={handleDocs}
+          disabled={loading}
           className='mt-8 w-full h-14 rounded-2xl bg-black text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-40 transition'
         >
-          Continue
+          {loading?<CircleDashed className="text-white animate-spin"/>:"Continue"}
         </motion.button> 
       </motion.div>
     </div>
