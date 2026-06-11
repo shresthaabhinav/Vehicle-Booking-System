@@ -5,6 +5,8 @@ import { ArrowLeft, BadgeCheck, CheckCircle, CircleDashed, CreditCard, Landmark,
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
 
+const IFSC_REGEX = /^[A-Z]{4}0[A-Z0-9]{6}$/
+
 export default function page() {
 
   const router = useRouter()
@@ -16,12 +18,21 @@ export default function page() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
+  const sanitizedIfsc = ifsc.trim().toUpperCase()
+
+  const isNameValid = accountHolder.trim().length>=3
+  const isAccountValid = accountNumber.trim().length>=9
+  const isIfscValid = IFSC_REGEX.test(sanitizedIfsc)
+  const isMobileValid = mobileNumber.trim().length == 10
+
+  const canSubmit = isNameValid && isAccountValid && isIfscValid && isMobileValid
+
   const handleBank=async ()=>{
       setLoading(true)
       setError("")
       try{
         const {data} = await axios.post("/api/partner/onboarding/bank",{
-          accountHolder, accountNumber, ifsc, upi, mobileNumber
+          accountHolder, accountNumber, ifsc:sanitizedIfsc, upi, mobileNumber
         })
         console.log(data)
         setLoading(false)
@@ -62,7 +73,11 @@ export default function page() {
 
             <div className='flex items-center gap-2 mt-2'>
               <div className='text-gray-400'><BadgeCheck/></div>
-              <input type="text" placeholder='As per bank records' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black' value={accountHolder} onChange={(e)=>setAccountHolder(e.target.value)}/>
+              <input type="text"
+                     id='ahn'
+                     placeholder='As per bank records'
+                     className={'flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'}
+                     value={accountHolder} onChange={(e)=>setAccountHolder(e.target.value)}/>
             </div>
           </div>
 
