@@ -73,12 +73,14 @@ export default function page() {
 
             <div className='flex items-center gap-2 mt-2'>
               <div className='text-gray-400'><BadgeCheck/></div>
-              <input type="text"
-                     id='ahn'
-                     placeholder='As per bank records'
-                     className={'flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black'}
-                     value={accountHolder} onChange={(e)=>setAccountHolder(e.target.value)}/>
+              <input type = "text"
+                     id = 'ahn'
+                     placeholder = 'As per bank records'
+                     className = {`flex-1 border-b pb-2 text-sm focus:outline-none ${!isNameValid && accountHolder.length>0? "border-red-400 focus:border-red-500":"border-gray-300 focus:border-black"} `}
+                     value = {accountHolder}
+                     onChange = {(e)=>setAccountHolder(e.target.value)}/>
             </div>
+            {!isNameValid && accountHolder.length>0 && <p className='mt-1 text-xs text-red-500'>Minimum 3 characters required</p>}
           </div>
 
           <div>
@@ -86,17 +88,29 @@ export default function page() {
 
             <div className='flex items-center gap-2 mt-2'>
               <div className='text-gray-400'><CreditCard/></div>
-              <input type="text" placeholder='Enter account number' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black' value={accountNumber} onChange={(e)=>setAccountNumber(e.target.value)}/>
+              <input type ="text"
+                     id = 'ahn'
+                     placeholder ='Enter account number'
+                     className = {`flex-1 border-b pb-2 text-sm focus:outline-none ${!isAccountValid && accountNumber.length>0? "border-red-400 focus:border-red-500":"border-gray-300 focus:border-black"} `}
+                     value = {accountNumber}
+                     onChange = {(e)=>setAccountNumber(e.target.value)}/>
             </div>
+            {!isAccountValid && accountNumber.length>0 && <p className='mt-1 text-xs text-red-500'>Account number must be at least 9 digits</p>}
           </div>
 
           <div>
-            <label htmlFor="ahn" className='text-xs font-semibold text-gray-500'>Bank code</label>
+            <label htmlFor="ahn" className='text-xs font-semibold text-gray-500'>IFSC code</label>
 
             <div className='flex items-center gap-2 mt-2'>
               <div className='text-gray-400'><Landmark/></div>
-              <input type="text" placeholder='GLBBNPKA' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black' value={ifsc} onChange={(e)=>setIfsc(e.target.value)}/>
+              <input type = "text"
+                     id = 'ahn'
+                     placeholder = 'HDFC0011223'
+                     className = {`flex-1 border-b pb-2 text-sm focus:outline-none ${!isIfscValid && ifsc.length>0? "border-red-400 focus:border-red-500":"border-gray-300 focus:border-black"} `}
+                     value = {ifsc}
+                     onChange = {(e)=>setIfsc(e.target.value)}/>
             </div>
+            {!isIfscValid && ifsc.length>0 && <p className='mt-1 text-xs text-red-500'>Invalid IFSC code</p>}
           </div>
 
           <div>
@@ -104,8 +118,13 @@ export default function page() {
 
             <div className='flex items-center gap-2 mt-2'>
               <div className='text-gray-400'><Phone/></div>
-              <input type="text" placeholder='10 digit mobile number' className='flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black' value={mobileNumber} onChange={(e)=>setMobileNumber(e.target.value)}/>
+              <input type = "text"
+                     placeholder = '10 digit mobile number'
+                     className = {`flex-1 border-b pb-2 text-sm focus:outline-none ${!isMobileValid && mobileNumber.length>0? "border-red-400 focus:border-red-500":"border-gray-300 focus:border-black"} `}
+                     value = {mobileNumber}
+                     onChange = {(e)=>setMobileNumber(e.target.value)}/>
             </div>
+            {!isMobileValid && mobileNumber.length>0 && <p className='mt-1 text-xs text-red-500'>Enter a valid 10-digit mobile number</p>}
           </div>
 
           <div>
@@ -128,8 +147,8 @@ export default function page() {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
           onClick={handleBank}
-          disabled={loading}
-          className='mt-8 w-full h-14 rounded-2xl bg-black text-white font-semibold disabled:opacity-40 transition'
+          disabled={!canSubmit || loading}
+          className='mt-8 w-full h-14 rounded-2xl bg-black text-white font-semibold disabled:opacity-40 transition flex items-center justify-center'
         >
         {loading?<CircleDashed className="text-white animate-spin"/>:"Continue"}
         </motion.button>
