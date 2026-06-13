@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, Bike, Car, CircleDashed, Package, Truck } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -41,6 +41,22 @@ export default function Page() {
         setLoading(false)
     }
   }
+
+  useEffect(()=>{
+    const handleGetVehicle = async ()=>{
+      setError("")
+      try{
+        const {data} = await axios.get("/api/partner/onboarding/vehicle")
+        setVehicleType(data.type)
+        setVehicleNumber(data.number)
+        setVehicleModel(data.vehicleModel);
+      }
+      catch(error:any){
+        console.log(error);
+      }
+    }
+    handleGetVehicle()
+  },[])
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <motion.div
