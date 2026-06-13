@@ -84,7 +84,7 @@ export async function GET(req:NextRequest){
         const partnerBank = await PartnerBank.findOne({ owner: user._id })
 
         if(partnerBank){
-            return Response.json(partnerBank
+            return Response.json({mobileNumber:user.mobileNumber, partnerBank}
                 ,{ status: 200 }
         )
         }else{

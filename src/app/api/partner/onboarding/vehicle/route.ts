@@ -38,14 +38,6 @@ export async function POST(req: Request) {
     }
 
     const vehicleNumber = number.toUpperCase();
-    const duplicate = await Vehicle.findOne({ number: vehicleNumber });
-
-    if (duplicate) {
-      return Response.json(
-        { message: "Vehicle already registered" },
-        { status: 400 },
-      );
-    }
 
     let vehicle = await Vehicle.findOne({ owner: user.id });
 
@@ -58,12 +50,22 @@ export async function POST(req: Request) {
 
       return Response.json(vehicle, { status: 200 });
     } 
-      vehicle = await Vehicle.create({
-        owner: user._id,
-        type,
-        number: vehicleNumber,
-        vehicleModel,
-      });
+
+    const duplicate = await Vehicle.findOne({ number: vehicleNumber });
+
+    if (duplicate) {
+      return Response.json(
+        { message: "Vehicle already registered" },
+        { status: 400 },
+      );
+    }
+    
+    vehicle = await Vehicle.create({
+      owner: user._id,
+      type,
+      number: vehicleNumber,
+      vehicleModel,
+    });
     
     if(user.partnerOnBoardingSteps<1){
         user.partnerOnBoardingSteps=1
