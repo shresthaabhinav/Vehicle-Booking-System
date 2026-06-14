@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import {
   ArrowLeft,
@@ -61,9 +61,10 @@ export default function page() {
         const { data } = await axios.get("/api/partner/onboarding/bank");
         console.log(data)
         setAccountHolder(data.partnerBank.accountHolder)
-        setAccountNumber(data.accountNumber)
-        setIfsc(data.ifsc)
-        setMobileNumber()
+        setAccountNumber(data.partnerBank.accountNumber)
+        setIfsc(data.partnerBank.ifsc)
+        setMobileNumber(data.mobileNumber)
+        setUpi(data.partnerBank.upi)
       } catch (error) {
         console.log(error);
       }
