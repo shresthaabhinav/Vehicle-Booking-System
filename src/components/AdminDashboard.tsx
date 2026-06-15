@@ -1,21 +1,32 @@
 'use client'
 import axios from 'axios'
+import { CheckCircle2, Clock, Settings, User, Users, XCircle } from 'lucide-react'
 import Image from 'next/image'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import Kpi from './Kpi'
+
+type Stats = {
+  totalApprovedPartners: number;
+  totalPartners: number;
+  totalPendingPartners: number;
+  totalRejectedPartners: number;
+};
 
 export default function AdminDashboard() {
 
-  const hanldeGetData = async () =>{
+  const [ stats, setStats ] = useState<Stats | null>(null)
+
+  const handleGetData = async () =>{
     try{
       const {data} = await axios.get("/api/admin/dashboard")
-      console.log(data)
+      setStats(data.stats)
     } catch(error){
       console.log(error)
     }
   }
 
   useEffect(()=>{
-    hanldeGetData()
+    handleGetData()
   },[])
   return (
     <div className='min-h-screen bg-linear-to-br from-gray-100 to-gray-200'>
@@ -27,10 +38,19 @@ export default function AdminDashboard() {
           </div>
 
           <div className='flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-black text-white'>
-
+            <User size={14}/> Admin Dashboard
           </div>
         </div>
       </div>
+
+      <main className='max-w-7xl mx-auto px-6 py-12 space-y-16'>
+        <div className='grid grid-cols-2 sm:grid-cols-4 gap-6'>
+          <Kpi label="Total Partners" value={stats?.totalPartners} icon={<Users/>} variant={"totalPartners"}/>
+          <Kpi label="Approved Partners" value={stats?.totalApprovedPartners} icon={<CheckCircle2/>} variant={"approved"}/>
+          <Kpi label="Pending Partners" value={stats?.totalPendingPartners} icon={<Clock/>} variant={"pending"}/>
+          <Kpi label="Rejected Partners" value={stats?.totalRejectedPartners} icon={<XCircle/>} variant={"rejected"}/>
+        </div>
+      </main>
     </div>
   )
 }

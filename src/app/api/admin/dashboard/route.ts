@@ -38,15 +38,20 @@ export async function GET(request: NextRequest){
             vehicleType: vehicleTypeMap.get(String(p._id))
         }))
 
-        return NextResponse.json({
+        return NextResponse.json(
+          {
+            stats: {
               totalPartners,
               totalApprovedPartners,
               totalPendingPartners,
               totalRejectedPartners,
-              pendingPartnersReviews
-        },{
+            },
+            pendingPartnersReviews,
+          },
+          {
             status: 200,
-        })
+          },
+        );
     }catch(error){
         return NextResponse.json({
             message: `admin dashboard error ${error}`
