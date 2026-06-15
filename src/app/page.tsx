@@ -8,30 +8,28 @@ import connectDb from "@/lib/db";
 import User from "@/models/user.model";
 
 export default async function Home() {
-
-  const session = await auth()
-  await connectDb()
-  const user = await User.findOne({email: session?.user?.email})
+  const session = await auth();
+  await connectDb();
+  const user = await User.findOne({ email: session?.user?.email });
   return (
     <>
-    <div className="w-full min-h-screen bg-white">
-    <Nav/>
-    {user?.role == "partner"
-    ?
-    <PartnerDashboard/>
-    :
-    (
-      user?.role == "admin"
-      ?
-      <AdminDashboard/>
-      :
-      <PublicHome/>
-    )
-    }
-    <PublicHome/>
-    <Footer/>
-    </div>
-
+      <div className="w-full min-h-screen bg-white">
+        {user?.role == "partner" ? (
+          <>
+            <Nav />
+            <PartnerDashboard />
+          </>
+        ) : user?.role == "admin" ? (
+          <AdminDashboard />
+        ) : (
+          <>
+            <Nav />
+            <PublicHome />
+          </>
+        )}
+        <PublicHome />
+        <Footer />
+      </div>
     </>
   );
 }
