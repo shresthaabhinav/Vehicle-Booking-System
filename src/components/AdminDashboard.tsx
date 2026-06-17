@@ -7,6 +7,7 @@ import Kpi from './Kpi'
 import TabButton from './TabButton'
 import { AnimatePresence } from 'motion/react'
 import { motion } from 'motion/react'
+import ContentList from './ContentList'
 
 type Stats = {
   totalApprovedPartners: number;
@@ -123,7 +124,9 @@ export default function AdminDashboard() {
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="space-y-3"
           >
-            
+            { activeTab == "partner" &&  <ContentList data={partnerReviews ?? []} type={"partner"}/> }
+            { activeTab == "kyc" &&  <ContentList data={pendingkyc ?? []} type={"kyc"}/> }
+            { activeTab == "vehicle" &&  <ContentList data={vehicleReviews ?? []} type={"vehicle"}/> }
           </motion.div>
         </AnimatePresence>
       </main>
