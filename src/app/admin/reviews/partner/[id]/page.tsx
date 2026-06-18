@@ -6,9 +6,10 @@ import { IVehicle } from "@/models/vehicle.model";
 import { IPartnerDocs } from "@/models/partnerDocs.model";
 import { IPartnerBank } from "@/models/partnerBank.model";
 import axios from 'axios'
-import { ArrowLeft, Car, CheckCircle, Clock, FileText, Landmark, XCircle } from 'lucide-react'
+import { ArrowLeft, Car, CheckCircle, Clock, FileText, Landmark, ShieldCheck, XCircle } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { AnimatePresence, motion } from "motion/react"
 
 export default function page() {
 
@@ -18,6 +19,8 @@ export default function page() {
   const [ vehicleDetails, setVehicleDetails ] = useState<IVehicle | null>(null)
   const [ partnerDocs, setPartnerDocs ] = useState<IPartnerDocs | null>(null);
   const [ partnerBank, setPartnerBank ] = useState<IPartnerBank | null>(null);
+  const [ showApprove, setShowApprove ] = useState(false)
+  const [ showReject, setShowReject ] = useState(false);
   const router = useRouter()
 
   const handleGetPartner = async ()=>{
@@ -26,6 +29,7 @@ export default function page() {
       setData(data.partner)
       setVehicleDetails(data.vehicle);
       setPartnerDocs(data.documents)
+      setPartnerBank(data.bank)
       setLoading(false)
     } catch (error) {
       console.log(error)
@@ -123,12 +127,135 @@ export default function page() {
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Account Holder</span>
               <span className="font-semibold">
-                {vehicleDetails?.number || "-"}
+                {partnerBank?.accountHolder || "-"}
               </span>
             </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-500">Account Number</span>
+              <span className="font-semibold">
+                {partnerBank?.accountNumber || "-"}
+              </span>
+              <span className="font-semibold">
+                {partnerBank?.accountNumber || "-"}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-500">IFSC Code</span>
+              <span className="font-semibold">
+                {partnerBank?.accountNumber || "-"}
+              </span>
+              <span className="font-semibold">{partnerBank?.ifsc || "-"}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-500">Upi</span>
+              <span className="font-semibold">
+                {partnerBank?.accountNumber || "-"}
+              </span>
+              <span className="font-semibold">{partnerBank?.upi || "-"}</span>
+            </div>
           </AnimatedCard>
+
+          {data?.partnerStatus == "pending" && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-[32px] p-8 shadow-xl space-y-6"
+            >
+              <div className="flex items-center gap-2 font-semibold">
+                <ShieldCheck size={18} />
+                Admin Check
+              </div>
+              <p className="text-sm text-gray-500">
+                Verify documents carefully before approving.
+              </p>
+
+              <div className="flex flex-col gap-4">
+                <button
+                  className="py-3 rounded-2xl bg-linear-to-r from-black to-gray-800 text-white font-semibold hover:opacity-90 transition"
+                  onClick={() => setShowApprove(true)}
+                >
+                  Approve
+                </button>
+                <button
+                  className="py-3 rounded-2xl border font-semibold hover:bg-gray-100 transition"
+                  onClick={() => setShowReject(true)}
+                >
+                  Reject
+                </button>
+              </div>
+            </motion.div>
+          )}
         </div>
       </main>
+
+      <AnimatePresence>
+        {showApprove && (
+          <motion.div
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center px-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              className="bg-white rounded-3xl p-6 w-full max-w-sm"
+            >
+              <h2 className="text-lg font-bold">Approve Partner?</h2>
+              <p className="text-sm text-gray-500 mt-2">
+                Confirm all information has been verified.
+              </p>
+              <div className="flex gap-3 mt-6">
+                <button
+                  className="flex-1 py-2 rounded-xl border"
+                  onClick={() => setShowApprove(false)}
+                >
+                  Cancel
+                </button>
+                <button className="flex-1 py-2 rounded-xl bg-black text-white">
+                  Yes, Approve
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showReject && (
+          <motion.div
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center px-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              className="bg-white rounded-3xl p-6 w-full max-w-sm"
+            >
+              <h2 className="text-lg font-bold">Reject Partner?</h2>
+              <p className="text-sm text-gray-500 mt-2">
+                <textarea
+                  placeholder="Enter rejection reason (required)"
+                  className='w-full mt-3 border rounded-xl p-3 text-sm'
+                />
+              </p>
+              <div className="flex gap-3 mt-6">
+                <button
+                  className="flex-1 py-2 rounded-xl border"
+                  onClick={() => setShowReject(false)}
+                >
+                  Cancel
+                </button>
+                <button className="flex-1 py-2 rounded-xl bg-black text-white">
+                  Reject
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
