@@ -21,6 +21,7 @@ export default function page() {
   const [ partnerBank, setPartnerBank ] = useState<IPartnerBank | null>(null);
   const [ showApprove, setShowApprove ] = useState(false)
   const [ showReject, setShowReject ] = useState(false);
+  const [ rejectionReason, setRejectionReason ] = useState("")
   const router = useRouter()
 
   const handleGetPartner = async ()=>{
@@ -48,6 +49,27 @@ export default function page() {
       </div>
     )
   }
+
+  const handleApprove = async ()=>{
+    setShowApprove(true)
+    try{
+      const {data} = await axios.get(`/api/admin/reviews/partner/${id}/approve`)
+      console.log(data)
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  const handleReject = async () => {
+    setShowReject(true);
+    try {
+      const { data } = await axios.get(`/api/admin/reviews/partner/${id}/reject`);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-100 to-gray-200">
       <div className="sticky top-0 z-40 backdrop-blur-xl bg-white/70 border-b">
@@ -172,13 +194,13 @@ export default function page() {
               <div className="flex flex-col gap-4">
                 <button
                   className="py-3 rounded-2xl bg-linear-to-r from-black to-gray-800 text-white font-semibold hover:opacity-90 transition"
-                  onClick={() => setShowApprove(true)}
+                  onClick={handleApprove}
                 >
                   Approve
                 </button>
                 <button
                   className="py-3 rounded-2xl border font-semibold hover:bg-gray-100 transition"
-                  onClick={() => setShowReject(true)}
+                  onClick={handleReject}
                 >
                   Reject
                 </button>
@@ -238,6 +260,8 @@ export default function page() {
               <p className="text-sm text-gray-500 mt-2">
                 <textarea
                   placeholder="Enter rejection reason (required)"
+                  value={rejectionReason}
+                  onChange={(e)=>setRejectionReason(e.target.value)}
                   className='w-full mt-3 border rounded-xl p-3 text-sm'
                 />
               </p>

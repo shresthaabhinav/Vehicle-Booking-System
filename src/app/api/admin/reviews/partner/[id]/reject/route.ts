@@ -15,6 +15,7 @@ export async function POST(
       return Response.json({ message: "unauthorized" }, { status: 400 });
     }
     await connectDb();
+    const {rejectionReason} = await req.json()
     const partnerId = (await context.params).id;
     const partner = await User.findById(partnerId);
 
@@ -22,38 +23,17 @@ export async function POST(
       return Response.json({ message: "partner not found" }, { status: 400 });
     }
 
-    if (partner.partnerStatus === "approved") {
-      return Response.json(
-        { message: "partner already approved" },
-        { status: 400 },
-      );
-    }
-
-    const partnerDocs = await PartnerDocs.findOne({ owner: partner._id });
-    const partnerBank = await PartnerBank.findOne({ owner: partner._id });
-
-    if (!partnerDocs || !partnerBank) {
-      return Response.json(
-        { message: "partner did not complete on boarding steps" },
-        { status: 400 },
-      );
-    }
-
-    partner.partnerStatus = "approved";
-    partner.partnerOnBoardingSteps = 4;
+    partner.partnerStatus = "rejected";
+    partner.rejectionReason = rejectionReason;
     await partner.save();
-    partnerDocs.status = "approved";
-    await partnerDocs.save();
-    partnerBank.status = "verified";
-    await partnerBank.save();
 
     return Response.json(
-      { message: "partner approved successfully" },
+      { message: "partner rejected successfully" },
       { status: 200 },
     );
   } catch (error) {
     return Response.json(
-      { message: `partner approved error ${error}` },
+      { message: `partner rejected error ${error}` },
       { status: 500 },
     );
   }
