@@ -51,7 +51,6 @@ export default function page() {
   }
 
   const handleApprove = async ()=>{
-    setShowApprove(true)
     try{
       const {data} = await axios.get(`/api/admin/reviews/partner/${id}/approve`)
       console.log(data)
@@ -61,9 +60,10 @@ export default function page() {
   }
 
   const handleReject = async () => {
-    setShowReject(true);
     try {
-      const { data } = await axios.get(`/api/admin/reviews/partner/${id}/reject`);
+      const { data } = await axios.get(`/api/admin/reviews/partner/${id}/reject`,{
+        rejectionReason
+      });
       console.log(data);
     } catch (error) {
       console.log(error);
@@ -194,13 +194,13 @@ export default function page() {
               <div className="flex flex-col gap-4">
                 <button
                   className="py-3 rounded-2xl bg-linear-to-r from-black to-gray-800 text-white font-semibold hover:opacity-90 transition"
-                  onClick={handleApprove}
+                  onClick={()=>setShowApprove(true)}
                 >
                   Approve
                 </button>
                 <button
                   className="py-3 rounded-2xl border font-semibold hover:bg-gray-100 transition"
-                  onClick={handleReject}
+                  onClick={()=>setShowReject(false)}
                 >
                   Reject
                 </button>
@@ -234,7 +234,8 @@ export default function page() {
                 >
                   Cancel
                 </button>
-                <button className="flex-1 py-2 rounded-xl bg-black text-white">
+                <button className="flex-1 py-2 rounded-xl bg-black text-white"
+                onClick={handleApprove}>
                   Yes, Approve
                 </button>
               </div>
@@ -261,8 +262,8 @@ export default function page() {
                 <textarea
                   placeholder="Enter rejection reason (required)"
                   value={rejectionReason}
-                  onChange={(e)=>setRejectionReason(e.target.value)}
-                  className='w-full mt-3 border rounded-xl p-3 text-sm'
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  className="w-full mt-3 border rounded-xl p-3 text-sm"
                 />
               </p>
               <div className="flex gap-3 mt-6">
@@ -272,7 +273,8 @@ export default function page() {
                 >
                   Cancel
                 </button>
-                <button className="flex-1 py-2 rounded-xl bg-black text-white">
+                <button className="flex-1 py-2 rounded-xl bg-black text-white"
+                onClick={handleReject}>
                   Reject
                 </button>
               </div>
