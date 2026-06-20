@@ -2,6 +2,7 @@
 import React from 'react'
 import { motion } from 'motion/react'
 import { ArrowRight, CheckCircle2, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function ContentList({data, type}:any) {
 

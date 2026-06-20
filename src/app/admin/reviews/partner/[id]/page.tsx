@@ -200,7 +200,7 @@ export default function page() {
                 </button>
                 <button
                   className="py-3 rounded-2xl border font-semibold hover:bg-gray-100 transition"
-                  onClick={()=>setShowReject(false)}
+                  onClick={()=>setShowReject(true)}
                 >
                   Reject
                 </button>

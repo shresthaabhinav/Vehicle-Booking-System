@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     rejectionReason:{
         type: String,
-    }
+    },
     otp: {
         type: String
     },
