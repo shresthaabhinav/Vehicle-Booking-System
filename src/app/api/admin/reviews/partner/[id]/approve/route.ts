@@ -60,6 +60,7 @@ export async function GET(req: NextRequest,
               )
 
         }catch(error){
+              console.log(error)
               return Response.json(
                 { message: `partner approved error ${error}` },
                 { status: 500 },

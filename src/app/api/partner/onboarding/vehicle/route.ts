@@ -47,6 +47,13 @@ export async function POST(req: Request) {
       vehicle.vehicleModel = vehicleModel;
       vehicle.status = "pending";
       await vehicle.save();
+      if(user.partnerOnBoardingSteps<2){
+        user.partnerOnBoardingSteps = 2;
+        await user.save()
+      }else{
+        user.partnerOnBoardingSteps = 3;
+        await user.save()
+      }
 
       return Response.json(vehicle, { status: 200 });
     } 
