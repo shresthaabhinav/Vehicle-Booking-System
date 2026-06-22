@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { motion } from "motion/react";
 import { Check, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
+import RejectionCard from "./RejectionCard";
 
 type Step = {
   id: number;
@@ -101,6 +102,20 @@ export default function PartnerDashboard() {
             </div>
           </div>
         </div>
+
+        {
+          activeStep == 4 && userData?.partnerStatus == "rejected" && (
+            <RejectionCard
+            title="Partner Rejected"
+            reason={userData.rejectionReason}
+            actionLabel={`Review and Update`}
+            onAction={()=>{
+            router.push("/partner/onboarding/vehicle")
+            }}
+            />
+          )
+        }
+
       </div>
     </div>
   );

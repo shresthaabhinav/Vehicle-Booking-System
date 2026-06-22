@@ -52,6 +52,7 @@ export async function POST(req: Request) {
         await user.save()
       }else{
         user.partnerOnBoardingSteps = 3;
+        user.partnerStatus = "pending";
         await user.save()
       }
 

@@ -6,7 +6,7 @@ import { IVehicle } from "@/models/vehicle.model";
 import { IPartnerDocs } from "@/models/partnerDocs.model";
 import { IPartnerBank } from "@/models/partnerBank.model";
 import axios from 'axios'
-import { ArrowLeft, Car, CheckCircle, Clock, FileText, Landmark, ShieldCheck, XCircle } from 'lucide-react'
+import { ArrowLeft, Car, CheckCircle, CircleDashed, Clock, FileText, Landmark, ShieldCheck, XCircle } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from "motion/react"
@@ -17,11 +17,13 @@ export default function page() {
   const [ data, setData ] = useState<IUser | null>(null)
   const [ loading, setLoading ] = useState(true)
   const [ vehicleDetails, setVehicleDetails ] = useState<IVehicle | null>(null)
-  const [ partnerDocs, setPartnerDocs ] = useState<IPartnerDocs | null>(null);
-  const [ partnerBank, setPartnerBank ] = useState<IPartnerBank | null>(null);
+  const [ partnerDocs, setPartnerDocs ] = useState<IPartnerDocs | null>(null)
+  const [ partnerBank, setPartnerBank ] = useState<IPartnerBank | null>(null)
   const [ showApprove, setShowApprove ] = useState(false)
-  const [ showReject, setShowReject ] = useState(false);
+  const [ showReject, setShowReject ] = useState(false)
   const [ rejectionReason, setRejectionReason ] = useState("")
+  const [ approveLoading , setApproveLoading ] = useState(false)
+  const [ rejectLoading, setRejectLoading ] = useState(false)
   const router = useRouter()
 
   const handleGetPartner = async ()=>{
@@ -51,22 +53,30 @@ export default function page() {
   }
 
   const handleApprove = async ()=>{
+    setApproveLoading(true)
     try{
       const {data} = await axios.get(`/api/admin/reviews/partner/${id}/approve`)
       console.log(data)
+      setApproveLoading(false)
+      router.push("/")
     }catch(error){
       console.log(error)
+      setApproveLoading(false)
     }
   }
 
   const handleReject = async () => {
+    setRejectLoading(true)
     try {
       const { data } = await axios.get(`/api/admin/reviews/partner/${id}/reject`,{
         rejectionReason
       });
-      console.log(data);
+      console.log(data)
+      setRejectLoading(false)
+      router.push("/");
     } catch (error) {
       console.log(error);
+      setRejectLoading(false);
     }
   };
 
@@ -194,13 +204,13 @@ export default function page() {
               <div className="flex flex-col gap-4">
                 <button
                   className="py-3 rounded-2xl bg-linear-to-r from-black to-gray-800 text-white font-semibold hover:opacity-90 transition"
-                  onClick={()=>setShowApprove(true)}
+                  onClick={() => setShowApprove(true)}
                 >
                   Approve
                 </button>
                 <button
                   className="py-3 rounded-2xl border font-semibold hover:bg-gray-100 transition"
-                  onClick={()=>setShowReject(true)}
+                  onClick={() => setShowReject(true)}
                 >
                   Reject
                 </button>
@@ -234,9 +244,16 @@ export default function page() {
                 >
                   Cancel
                 </button>
-                <button className="flex-1 py-2 rounded-xl bg-black text-white"
-                onClick={handleApprove}>
-                  Yes, Approve
+                <button
+                  className="flex-1 flex py-2 items-center justify-center rounded-xl bg-black text-white"
+                  onClick={handleApprove}
+                  disabled={approveLoading}
+                >
+                  {approveLoading ? (
+                    <CircleDashed className="text-white animate-spin" />
+                  ) : (
+                    "Yes, Approve"
+                  )}
                 </button>
               </div>
             </motion.div>
@@ -273,9 +290,16 @@ export default function page() {
                 >
                   Cancel
                 </button>
-                <button className="flex-1 py-2 rounded-xl bg-black text-white"
-                onClick={handleReject}>
-                  Reject
+                <button
+                  className="flex-1 py-2 flex items-center justify-center rounded-xl bg-black text-white"
+                  onClick={handleReject}
+                  disabled={rejectLoading}
+                >
+                  {rejectLoading ? (
+                    <CircleDashed className="text-white animate-spin" />
+                  ) : (
+                    "Reject"
+                  )}
                 </button>
               </div>
             </motion.div>
