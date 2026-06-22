@@ -28,12 +28,12 @@ export async function POST(req: NextRequest){
 
         const formData = await req.formData()
 
-        const citizenship = formData.get("citizen") as Blob | null
+        const citizenship = formData.get("citizenship") as Blob | null
         const license = formData.get("license") as Blob | null
         const rc = formData.get("rc") as Blob | null
 
         if( !citizenship || !license || !rc ){
-            return Response.json({ messag: "all documents are required"}
+            return Response.json({ message: "all documents are required"}
                 ,{ status: 400 }
             )
         }
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest){
         if(citizenship){
             const url = await uploadOnCloudinary(citizenship)
             if(!url){
-                return Response.json({ messag: "Citizenship documents upload failed"}
+                return Response.json({ message: "Citizenship documents upload failed"}
                 ,{ status: 500 }
             )
             }
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest){
         if(license){
             const url = await uploadOnCloudinary(license)
             if(!url){
-                return Response.json({ messag: "Citizenship documents upload failed"}
+                return Response.json({ message: "Citizenship documents upload failed"}
                 ,{ status: 500 }
             )
             }
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest){
         if(rc){
             const url = await uploadOnCloudinary(rc)
             if(!url){
-                return Response.json({ messag: "Citizenship documents upload failed"}
+                return Response.json({ message: "Citizenship documents upload failed"}
                 ,{ status: 500 }
             )
             }
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest){
 
     } catch(error){
         return Response.json({ message: `partner docs error ${error}`}
-                ,{ status: 201 }
+                ,{ status: 500 }
             )
     }
 }

@@ -34,6 +34,8 @@ export default function page() {
       formdata.append("license",docs?.license)
       formdata.append("rc",docs?.rc)
 
+      console.log("formdata entries:", [...formdata.entries()]); 
+      
       const {data} = await axios.post("/api/partner/onboarding/documents",formdata)
       setLoading(false)
     }catch(error:any){

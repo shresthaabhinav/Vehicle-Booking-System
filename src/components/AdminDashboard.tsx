@@ -36,7 +36,17 @@ export default function AdminDashboard() {
     }
   }
 
+   const handleGetPendingKYC = async () => {
+     try {
+       const { data } = await axios.get("/api/admin/video-kyc/pending");
+       setPendingkyc(data)
+     } catch (error) {
+       console.log(error);
+     }
+   }
+
   useEffect(()=>{
+    handleGetPendingKYC()
     handleGetData()
   },[])
   return (

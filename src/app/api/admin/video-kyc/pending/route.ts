@@ -15,8 +15,13 @@ export async function GET(){
         const partner = await User.find({
           role: "partner",
           videoKycStatus: { $in: ["pending", "in_progress"] },
-        });
+        })
+        return Response.json(
+            partner,{status: 200}
+        )
     }catch(error){
-
+        return Response.json(
+            {message: `partner kyc get error ${error}`},{status: 500}
+        )
     }
 }
