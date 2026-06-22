@@ -1,6 +1,9 @@
 import mongoose, { Document } from "mongoose";
 import { number } from "motion";
 
+type videoKycStatus=
+    "not_required" | "pending" | "in_progress" | "approved" | "rejected";
+
 export interface IUser extends Document {
     name: string;
     email: string;
@@ -13,57 +16,73 @@ export interface IUser extends Document {
     mobileNumber?: string;
     partnerStatus: "pending" | "approved" | "rejected"
     rejectionReason?: string;
+    videoKycStatus: videoKycStatus;
+    videoKycRoomId: string;
+    videoKycRejectionReason: string;
     createdAt: Date;
     updatedAt: Date;
 }
 
-const userSchema = new mongoose.Schema<IUser>({
+const userSchema = new mongoose.Schema<IUser>(
+  {
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        required: true,
-        unique: true
+      type: String,
+      required: true,
+      unique: true,
     },
     password: {
-        type: String,
+      type: String,
     },
     role: {
-        type: String,
-        default: "user",
-        enum: ["user", "partner", "admin"]
+      type: String,
+      default: "user",
+      enum: ["user", "partner", "admin"],
     },
     isEmailVerified: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
-    partnerOnBoardingSteps:{
-        type: Number,
-        min: 0,
-        max: 8,
-        default: 0
+    partnerOnBoardingSteps: {
+      type: Number,
+      min: 0,
+      max: 8,
+      default: 0,
     },
-    mobileNumber:{
-        type: String,
+    mobileNumber: {
+      type: String,
     },
-    partnerStatus:{
-        type: String,
-        enum: ["pending", "approved", "rejected"],
-        default: "pending",
+    partnerStatus: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
     },
-    rejectionReason:{
-        type: String,
+    rejectionReason: {
+      type: String,
+    },
+    videoKycStatus: {
+      type: String,
+      enum: ["not_required", "pending", "in_progress", "approved", "rejected"],
+      default: "not_required",
+    },
+    videoKycRoomId: {
+      type: String,
+    },
+    videoKycRejectionReason: {
+      type: String,
     },
     otp: {
-        type: String
+      type: String,
     },
     otpExpiresAt: {
-        type: Date
-    }
-
-}, { timestamps: true })
+      type: Date,
+    },
+  },
+  { timestamps: true },
+);
 
 const User =
     mongoose.models.User || mongoose.model<IUser>("User", userSchema)

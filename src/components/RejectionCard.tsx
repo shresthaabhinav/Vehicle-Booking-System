@@ -12,6 +12,14 @@ export default function RejectionCard({title, reason, actionLabel, onAction}: an
       <div className='bg-white border rounded-xl p-4 text-sm sm:text-base'>
         {reason}
       </div>
+      {onAction && (
+        <button
+        onClick={onAction}
+        className='w-full sm:w-auto px-6 py-2.5 bg-black text-white rounded-xl text-sm sm:text-base font-medium hover:bg-gray-800 transition'
+        >
+            {actionLabel || "retry"}
+        </button>
+      )}
     </div>
   )
 }

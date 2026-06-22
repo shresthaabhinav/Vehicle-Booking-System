@@ -48,6 +48,7 @@ export async function GET(req: NextRequest,
               }
 
               partner.partnerStatus="approved"
+              partner.videoKycStatus="pending"
               partner.partnerOnBoardingSteps=4
               await partner.save()
               partnerDocs.status="approved"
