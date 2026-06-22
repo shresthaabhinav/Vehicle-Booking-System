@@ -158,31 +158,18 @@ export default function page() {
           <AnimatedCard title={"Bank Details"} icon={<Landmark size={18} />}>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Account Holder</span>
-              <span className="font-semibold">
-                {partnerBank?.accountHolder || "-"}
-              </span>
+              <span className="font-semibold">{partnerBank?.accountHolder || "-"}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Account Number</span>
-              <span className="font-semibold">
-                {partnerBank?.accountNumber || "-"}
-              </span>
-              <span className="font-semibold">
-                {partnerBank?.accountNumber || "-"}
-              </span>
+              <span className="font-semibold">{partnerBank?.accountNumber || "-"}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">IFSC Code</span>
-              <span className="font-semibold">
-                {partnerBank?.accountNumber || "-"}
-              </span>
               <span className="font-semibold">{partnerBank?.ifsc || "-"}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Upi</span>
-              <span className="font-semibold">
-                {partnerBank?.accountNumber || "-"}
-              </span>
               <span className="font-semibold">{partnerBank?.upi || "-"}</span>
             </div>
           </AnimatedCard>
