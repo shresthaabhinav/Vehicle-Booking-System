@@ -125,21 +125,22 @@ export default function PartnerDashboard() {
           />
         )}
 
-        {activeStep == 5 && userData?.videoKycStatus === "approved" ? (
+        {
+        activeStep==5 && (
+        userData?.videoKycStatus === "approved" ? (
           <StatusCard
             icon={<Check size={18} />}
             title={"video kyc approved"}
             desc={"You can now proceed to pricing."}
           />
-        ) : activeStep == 5 && userData?.videoKycStatus === "rejected" ? (
+        ) : userData?.videoKycStatus === "rejected" ? (
           <RejectionCard
             title="Video KYC Rejected"
             reason={userData?.videoKycRejectionReason}
             actionLabel="Request Again"
           />
-        ) : activeStep == 5 &&
-          userData?.videoKycStatus === "in_progress" &&
-          userData?.videoKycRoomId ? (
+        ) :
+          userData?.videoKycStatus === "in_progress" && userData?.videoKycRoomId ? (
           <ActionCard
             icon={<Video size={18} />}
             title={"Admin Started Video Kyc"}
@@ -152,7 +153,9 @@ export default function PartnerDashboard() {
             title="Waiting for admin"
             desc="Admin will initiate Video KYC shortly."
           />
-        )}
+        )
+      )
+      }
       </div>
     </div>
   );
