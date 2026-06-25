@@ -4,7 +4,10 @@ import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt'
 import { RootState } from '@/redux/store'
 import { useSelector } from 'react-redux'
 import Image from 'next/image'
-import { CheckCircle, Mic, MicOff, PhoneOff, Video, VideoOff, XCircle } from 'lucide-react'
+import { CheckCircle, Mic, MicOff, PhoneOff, Video, VideoOff, X, XCircle } from 'lucide-react'
+import { useParams } from 'next/navigation'
+import axios from 'axios'
+import { AnimatePresence, motion } from 'motion/react'
 
 export default function page() {
 
@@ -16,6 +19,11 @@ export default function page() {
     const [ isMicOn, setIsMicOn ] = useState(true)
     const { roomId } = useParams()
     const [ loading, setLoading ] = useState(false)
+    const [ reason, setReason ] = useState("");
+    const [ aLoading, setALoading ] = useState(false)
+    const [ rLoading, setRLoading ] = useState(false)
+    const [ showApprovalModal, setShowApprovalModel ] = useState(false)
+    const [ showRejectionModal, setShowRejectionModel ] = useState(false)
 
     useEffect(()=>{
         if(joined) return
@@ -47,6 +55,30 @@ export default function page() {
         if(!stream) return
         stream.getAudioTracks().forEach((track)=>track.enabled=!isMicOn)
         setIsMicOn(!isMicOn)
+    }
+
+    const handleApprove =async (action:string) =>{
+      setALoading(true)
+      try{
+        const { data } = await axios.post("/api/admin/video-kyc/complete",{roomId, action:"approved"})
+        console.log(data)
+        setALoading(false)
+      } catch(error:any){
+        console.log(error.response.data.message ?? error);
+        setALoading(false)
+      }
+    }
+
+    const handleReject =async (action:string) =>{
+      setRLoading(true)
+      try{
+        const { data } = await axios.post("/api/admin/video-kyc/complete",{roomId, action:"rejected",reason})
+        console.log(data)
+        setRLoading(false)
+      } catch(error:any){
+        console.log(error.response.data.message ?? error);
+        setRLoading(false)
+      }
     }
 
     const { userData } = useSelector((state:RootState)=>state.user)
@@ -99,8 +131,8 @@ export default function page() {
           <div className="flex flex-wrap gap-3">
             {userData?.role === "admin" && (
               <>
-                <button className='bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full text-sm flex items-center gap-2'><CheckCircle size={16}/> Approve</button>
-                <button className='bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full text-sm flex items-center gap-2'><XCircle size={16}/> Reject</button>
+                <button className='bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full text-sm flex items-center gap-2' onClick={()=>setShowApprovalModel(true)}><CheckCircle size={16}/> Approve</button>
+                <button className='bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full text-sm flex items-center gap-2' onClick={()=>setShowRejectionModel(true)}><XCircle size={16}/> Reject</button>
               </>
             )}
             <button className='bg-red-700 hover:bg-red-800 px-4 py-2 rounded-full text-sm flex items-center gap-2'><PhoneOff size={16}/>End Call</button>
@@ -161,6 +193,35 @@ export default function page() {
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+        { showApprovalModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className='fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4'
+          >
+            <motion.div
+              initial={{ scale: 0.9}}
+              animate={{ opacity: 1 }}
+              className='relative bg-[#111] w-full max-w-md rounded-2xl p-6 shadow-2xl'
+            >
+              <button className='absolute top-4 right-4 text-gray-400' onClick={()=>setShowApprovalModel(false)}>
+                <X size={16}/>
+              </button>
+
+              <h2 className='text-lg font-semibold mb-4'>
+                Confirm Approval
+              </h2>
+
+              <button onClick={()=>setShowApprovalModel(false)} className='flex-1 border rounded-xl py-2'>Cancel</button>
+              <button onClick={handleApprove} disabled={aLoading} className='flex-1 bg-green-600 rounded-xl py-2'>{aLoading?"Processing...":"Approve"}</button>
+
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
