@@ -131,11 +131,24 @@ export default function page() {
           <div className="flex flex-wrap gap-3">
             {userData?.role === "admin" && (
               <>
-                <button className='bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full text-sm flex items-center gap-2' onClick={()=>setShowApprovalModel(true)}><CheckCircle size={16}/> Approve</button>
-                <button className='bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full text-sm flex items-center gap-2' onClick={()=>setShowRejectionModel(true)}><XCircle size={16}/> Reject</button>
+                <button
+                  className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full text-sm flex items-center gap-2"
+                  onClick={() => setShowApprovalModel(true)}
+                >
+                  <CheckCircle size={16} /> Approve
+                </button>
+                <button
+                  className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full text-sm flex items-center gap-2"
+                  onClick={() => setShowRejectionModel(true)}
+                >
+                  <XCircle size={16} /> Reject
+                </button>
               </>
             )}
-            <button className='bg-red-700 hover:bg-red-800 px-4 py-2 rounded-full text-sm flex items-center gap-2'><PhoneOff size={16}/>End Call</button>
+            <button className="bg-red-700 hover:bg-red-800 px-4 py-2 rounded-full text-sm flex items-center gap-2">
+              <PhoneOff size={16} />
+              End Call
+            </button>
           </div>
         )}
       </div>
@@ -195,29 +208,89 @@ export default function page() {
       </div>
 
       <AnimatePresence>
-        { showApprovalModal && (
+        {showApprovalModal && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className='fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4'
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           >
             <motion.div
-              initial={{ scale: 0.9}}
+              initial={{ scale: 0.9 }}
               animate={{ opacity: 1 }}
-              className='relative bg-[#111] w-full max-w-md rounded-2xl p-6 shadow-2xl'
+              className="relative bg-[#111] w-full max-w-md rounded-2xl p-6 shadow-2xl"
             >
-              <button className='absolute top-4 right-4 text-gray-400' onClick={()=>setShowApprovalModel(false)}>
-                <X size={16}/>
+              <button
+                className="absolute top-4 right-4 text-gray-400"
+                onClick={() => setShowApprovalModel(false)}
+              >
+                <X size={16} />
               </button>
 
-              <h2 className='text-lg font-semibold mb-4'>
-                Confirm Approval
-              </h2>
+              <h2 className="text-lg font-semibold mb-4">Confirm Approval</h2>
 
-              <button onClick={()=>setShowApprovalModel(false)} className='flex-1 border rounded-xl py-2'>Cancel</button>
-              <button onClick={handleApprove} disabled={aLoading} className='flex-1 bg-green-600 rounded-xl py-2'>{aLoading?"Processing...":"Approve"}</button>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setShowApprovalModel(false)}
+                  className="flex-1 border rounded-xl py-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleApprove}
+                  disabled={aLoading}
+                  className="flex-1 bg-green-600 rounded-xl py-2"
+                >
+                  {aLoading ? "Processing..." : "Approve"}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
+      <AnimatePresence>
+        {showRejectionModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ opacity: 1 }}
+              className="relative bg-[#111] w-full max-w-md rounded-2xl p-6 shadow-2xl"
+            >
+              <button
+                className="absolute top-4 right-4 text-gray-400"
+                onClick={() => setShowRejectionModel(false)}
+              >
+                <X size={16} />
+              </button>
+
+              <h2 className="text-lg font-semibold mb-4">Reject Partner</h2>
+
+              <textarea
+                placeholder='Give Rejection Reason'
+                value={reason}
+                onChange={(e)=>setReason(e.target.value)}
+                className="w-full bg-white/10 border border-white/20 rounded-xl p-3 mb-4 text-sm"/>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setShowRejectionModel(false)}
+                  className="flex-1 border rounded-xl py-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleReject}
+                  disabled={rLoading}
+                  className="flex-1 bg-green-600 rounded-xl py-2"
+                >
+                  {rLoading ? "Processing..." : "Reject"}
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
