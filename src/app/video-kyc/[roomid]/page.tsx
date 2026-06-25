@@ -4,7 +4,7 @@ import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt'
 import { RootState } from '@/redux/store'
 import { useSelector } from 'react-redux'
 import Image from 'next/image'
-import { VideoOff } from 'lucide-react'
+import { CheckCircle, Mic, MicOff, PhoneOff, Video, VideoOff, XCircle } from 'lucide-react'
 
 export default function page() {
 
@@ -14,6 +14,8 @@ export default function page() {
     const [ stream, setStream ] = useState<MediaStream | null>()
     const [ isCameraOn, setIsCameraOn ] = useState(true)
     const [ isMicOn, setIsMicOn ] = useState(true)
+    const { roomId } = useParams()
+    const [ loading, setLoading ] = useState(false)
 
     useEffect(()=>{
         if(joined) return
@@ -52,15 +54,19 @@ export default function page() {
     if(!containerRef){
         return null
     }
+    setLoading(true)
+
+    const displayName = userData.role == "admin" ? "Admin" : `${userData?.name} (${userData?.email})`
+
     try{
         const appId = Number(process.env.NEXT_PUBLIC_ZEGO_APP_ID)
         const serverSecret = process.env.NEXT_PUBLIC_ZEGO_SERVER_SECRET
         const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
             appId,
             serverSecret!,
-            "shrestha",
+            roomId?.toString()!,
             userData?._id.toString()!,
-            "abhinav"
+            displayName
         )
         const zp = ZegoUIKitPrebuilt.create(kitToken)
 
@@ -72,40 +78,89 @@ export default function page() {
             showPreJoinView:false
         });
         setJoined(true)
+        setLoading(false)
     }catch(error){
         console.log(error)
     }
   }
   return (
-    <div className='min-h-screen bg-black text-white flex flex-col'>
-        <div className='px-6 py-4 border-b border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4'>
-            <div>
-                <Image src={"/logo.png"} alt="logo" width={44} height={44} priority />
-                <p className='text-xs text-gray-400'>{userData?.role=="admin"?"Admin Verification":"Partner Video KYC"}</p>
-            </div>
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      <div className="px-6 py-4 border-b border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <Image src={"/logo.png"} alt="logo" width={44} height={44} priority />
+          <p className="text-xs text-gray-400">
+            {userData?.role == "admin"
+              ? "Admin Verification"
+              : "Partner Video KYC"}
+          </p>
         </div>
-        <div className='flex-1 relative'>
-            {!joined && (
-                <div className='h-full flex itmes-center justify-center px-4 py-10'>
-                    <div className='w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
-                        <div className='relative rounded-2xl overflow-hidden border border-white/10 bg-white/5'>
-                        <video 
-                            ref={previewRef} 
-                            autoPlay
-                            muted
-                            playsInline
-                            className='w-full h-[300px] sm:h-[400px] object-cover'
-                            />
-                            {!isCameraOn && (
-                                <div className='absolute inset-0 bg-black flex items-center justify-center'>
-                                    <VideoOff size={40}/>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
+
+        {joined && (
+          <div className="flex flex-wrap gap-3">
+            {userData?.role === "admin" && (
+              <>
+                <button className='bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full text-sm flex items-center gap-2'><CheckCircle size={16}/> Approve</button>
+                <button className='bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full text-sm flex items-center gap-2'><XCircle size={16}/> Reject</button>
+              </>
             )}
-        </div>
+            <button className='bg-red-700 hover:bg-red-800 px-4 py-2 rounded-full text-sm flex items-center gap-2'><PhoneOff size={16}/>End Call</button>
+          </div>
+        )}
+      </div>
+      <div className="flex-1 relative">
+        <div
+          ref={containerRef}
+          className={`absolute inset-0 ${joined ? "block" : "hidden"}`}
+        />
+        {!joined && (
+          <div className="h-full flex itmes-center justify-center px-4 py-10">
+            <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-white/5">
+                <video
+                  ref={previewRef}
+                  autoPlay
+                  muted
+                  playsInline
+                  className="w-full h-[300px] sm:h-[400px] object-cover"
+                />
+                {!isCameraOn && (
+                  <div className="absolute inset-0 bg-black flex items-center justify-center">
+                    <VideoOff size={40} />
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-8 text-center lg:text-left">
+                <h1 className="text-3xl sm:text-4xl font-bold">
+                  Secure Video KYC
+                </h1>
+                <div className="flex justify-center lg:justify-start gap-6">
+                  <button
+                    onClick={toggleCamera}
+                    className={`w-14 h-14 rounded-full flex items-center justify-center transition ${isCameraOn ? "bg-white text-black" : "bg-white/10 border border-white/20"}`}
+                  >
+                    {isCameraOn ? <Video /> : <VideoOff />}
+                  </button>
+                  <button
+                    onClick={toggleMic}
+                    className={`w-14 h-14 rounded-full flex items-center justify-center transition ${isMicOn ? "bg-white text-black" : "bg-white/10 border border-white/20"}`}
+                  >
+                    {isMicOn ? <Mic /> : <MicOff />}
+                  </button>
+                </div>
+
+                <button
+                  onClick={startCall}
+                  className="w-full bg-white text-black py-4 rounded-xl font-semibold"
+                  disabled={loading}
+                >
+                  {loading ? "Connecting..." : "Join Secure Call"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
-  )
+  );
 }
