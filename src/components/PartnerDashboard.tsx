@@ -9,6 +9,7 @@ import RejectionCard from "./RejectionCard";
 import StatusCard from "./StatusCard";
 import ActionCard from "./ActionCard";
 import axios from "axios";
+import PricingModal from "./PricingModal";
 
 type Step = {
   id: number;
