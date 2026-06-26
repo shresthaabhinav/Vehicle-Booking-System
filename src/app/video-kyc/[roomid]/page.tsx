@@ -8,6 +8,7 @@ import { CheckCircle, Mic, MicOff, PhoneOff, Video, VideoOff, X, XCircle } from 
 import { useParams } from 'next/navigation'
 import axios from 'axios'
 import { AnimatePresence, motion } from 'motion/react'
+import { useRouter } from 'next/router'
 
 export default function page() {
 
@@ -24,6 +25,7 @@ export default function page() {
     const [ rLoading, setRLoading ] = useState(false)
     const [ showApprovalModal, setShowApprovalModel ] = useState(false)
     const [ showRejectionModal, setShowRejectionModel ] = useState(false)
+    const router = useRouter()
 
     useEffect(()=>{
         if(joined) return
@@ -63,6 +65,7 @@ export default function page() {
         const { data } = await axios.post("/api/admin/video-kyc/complete",{roomId, action:"approved"})
         console.log(data)
         setALoading(false)
+        router.push("/");
       } catch(error:any){
         console.log(error.response.data.message ?? error);
         setALoading(false)
@@ -75,6 +78,7 @@ export default function page() {
         const { data } = await axios.post("/api/admin/video-kyc/complete",{roomId, action:"rejected",reason})
         console.log(data)
         setRLoading(false)
+        router.push("/");
       } catch(error:any){
         console.log(error.response.data.message ?? error);
         setRLoading(false)
@@ -133,19 +137,26 @@ export default function page() {
               <>
                 <button
                   className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full text-sm flex items-center gap-2"
-                  onClick={() => setShowApprovalModel(true)}
+                  onClick={() => {
+                    setShowApprovalModel(true)
+                  }
+                  }
                 >
                   <CheckCircle size={16} /> Approve
                 </button>
                 <button
                   className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full text-sm flex items-center gap-2"
-                  onClick={() => setShowRejectionModel(true)}
+                  onClick={() => {
+                    setShowRejectionModel(true)
+                  }
+                  }
                 >
                   <XCircle size={16} /> Reject
                 </button>
               </>
             )}
-            <button className="bg-red-700 hover:bg-red-800 px-4 py-2 rounded-full text-sm flex items-center gap-2">
+            <button className="bg-red-700 hover:bg-red-800 px-4 py-2 rounded-full text-sm flex items-center gap-2"
+              onClick={()=>router.push("/")}>
               <PhoneOff size={16} />
               End Call
             </button>

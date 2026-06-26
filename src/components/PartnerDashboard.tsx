@@ -33,7 +33,9 @@ export default function PartnerDashboard() {
   const [activeStep, setActiveStep] = useState(0);
   const { userData } = useSelector((state: RootState) => state.user);
   const router = useRouter()
-  const [requestLoading, setRequestLoading]=useState()
+  const [requestLoading, setRequestLoading]=useState(false)
+  const [showPricing, setShowPricing]=useState(false)
+  const [vehicleData, setVehicleData]=useState<IVehicle | null>()
 
   useEffect(() => {
     if (userData) {
@@ -42,6 +44,11 @@ export default function PartnerDashboard() {
   }, [userData]);
 
   const goToStep =(step:Step)=>{
+
+    if(step.id==6 && userData?.partnerStatus==="approved" && userData.videoKycStatus==="approved"){
+        setShowPricing(true)
+        return
+    }
     if(step.route && step.id<=activeStep){
         router.push(step.route)
     }
@@ -139,9 +146,11 @@ export default function PartnerDashboard() {
           <RejectionCard
             title="Video KYC Rejected"
             reason={userData?.videoKycRejectionReason}
-            actionLabel="Request Again"
+            actionLabel={requestLoading?"Requesting...":"Request Again"}
             onAction={async()=>{
-              await axios.get("/partner/video-kyc/request")
+              setRequestLoading(true)
+              await axios.get("/api/partner/video-kyc/request")
+              setRequestLoading(false)
             }}
           />
         ) :
@@ -162,6 +171,12 @@ export default function PartnerDashboard() {
       )
       }
       </div>
+
+      <PricingModal
+      open={showPricing}
+      onClose={()=>setShowPricing(false)}
+      data={vehicleData}
+      />
     </div>
   );
 }
