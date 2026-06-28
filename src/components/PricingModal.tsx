@@ -5,6 +5,7 @@ import { IVehicle } from "@/models/vehicle.model";
 import { ImagePlus } from "lucide-react";
 import { FaRupeeSign } from "react-icons/fa6";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 type PropsType = {
   open: boolean;
@@ -19,14 +20,19 @@ export default function PriceModal({ open, onClose, data }: PropsType) {
   const [pricePerKM, setPricePerKM] = useState("");
   const [waitingCharge, setWaitingCharge] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter()
 
   useEffect(()=>{
     if(data){
       setPreview(data?.imageUrl || null)
+      setBaseFare(data.baseFare?.toString() || "")
+      setPricePerKM(data.baseFare?.toString() || "")
+      setWaitingCharge(data.baseFare?.toString() || "")
     }
   },[data])
 
   const handleSubmit = async ()=>{
+    setLoading(true)
     try {
       const formData = new FormData()
       formData.append("basefare",baseFare)
@@ -39,8 +45,11 @@ export default function PriceModal({ open, onClose, data }: PropsType) {
 
       const {data} = await axios.post("/api/partner/onboarding/pricing",formData)
       console.log(data)
+      setLoading(false)
+      onClose()
     } catch (error:any) {
       console.log(error.response.data.message ?? error);
+      setLoading(false);
     }
   }
 

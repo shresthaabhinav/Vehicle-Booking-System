@@ -149,48 +149,65 @@ export default function PartnerDashboard() {
           />
         )}
 
-        {
-        activeStep==5 && (
-        userData?.videoKycStatus === "approved" ? (
-          <StatusCard
-            icon={<Check size={18} />}
-            title={"video kyc approved"}
-            desc={"You can now proceed to pricing."}
-          />
-        ) : userData?.videoKycStatus === "rejected" ? (
-          <RejectionCard
-            title="Video KYC Rejected"
-            reason={userData?.videoKycRejectionReason}
-            actionLabel={requestLoading?"Requesting...":"Request Again"}
-            onAction={async()=>{
-              setRequestLoading(true)
-              await axios.get("/api/partner/video-kyc/request")
-              setRequestLoading(false)
-            }}
-          />
-        ) :
-          userData?.videoKycStatus === "in_progress" && userData?.videoKycRoomId ? (
-          <ActionCard
-            icon={<Video size={18} />}
-            title={"Admin Started Video Kyc"}
-            button={"Join Call"}
-            onClick={() => router.push(`/video-kyc/${userData.videoKycRoomId}`)}
-          />
-        ) : (
+        {activeStep == 5 &&
+          (userData?.videoKycStatus === "approved" ? (
+            <StatusCard
+              icon={<Check size={18} />}
+              title={"video kyc approved"}
+              desc={"You can now proceed to pricing."}
+            />
+          ) : userData?.videoKycStatus === "rejected" ? (
+            <RejectionCard
+              title="Video KYC Rejected"
+              reason={userData?.videoKycRejectionReason}
+              actionLabel={requestLoading ? "Requesting..." : "Request Again"}
+              onAction={async () => {
+                setRequestLoading(true);
+                await axios.get("/api/partner/video-kyc/request");
+                setRequestLoading(false);
+              }}
+            />
+          ) : userData?.videoKycStatus === "in_progress" &&
+            userData?.videoKycRoomId ? (
+            <ActionCard
+              icon={<Video size={18} />}
+              title={"Admin Started Video Kyc"}
+              button={"Join Call"}
+              onClick={() =>
+                router.push(`/video-kyc/${userData.videoKycRoomId}`)
+              }
+            />
+          ) : (
+            <StatusCard
+              icon={<Clock size={18} />}
+              title="Waiting for admin"
+              desc="Admin will initiate Video KYC shortly."
+            />
+          ))}
+
+        {activeStep == 7 && vehicleData?.status == "pending" && (
           <StatusCard
             icon={<Clock size={18} />}
-            title="Waiting for admin"
-            desc="Admin will initiate Video KYC shortly."
+            title={"Pricing under review"}
+            desc={"Admin is reviewing your pricing."}
           />
-        )
-      )
-      }
+        )}
+
+        {activeStep == 7 && vehicleData?.status == "rejected" && (
+          <RejectionCard
+            title="Pricing Rejected"
+            reason={vehicleData.rejectionReason}
+            actionLabel="Edit & Resubmit"
+            onAction={() => setShowPricing(true)}
+          />
+        )}
+
       </div>
 
       <PricingModal
-      open={showPricing}
-      onClose={()=>setShowPricing(false)}
-      data={vehicleData}
+        open={showPricing}
+        onClose={() => setShowPricing(false)}
+        data={vehicleData}
       />
     </div>
   );
