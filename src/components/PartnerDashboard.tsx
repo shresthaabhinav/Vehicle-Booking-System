@@ -44,6 +44,20 @@ export default function PartnerDashboard() {
     }
   }, [userData]);
 
+  const handleGetPricing = async()=>{
+    try{
+      const {data} = await axios.get("/api/partner/onboarding/pricing")
+      console.log(data)
+      setVehicleData(data)
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  useEffect(()=>{
+    hnadleGetPricing()
+  },[])
+
   const goToStep =(step:Step)=>{
 
     if(step.id==6 && userData?.partnerStatus==="approved" && userData.videoKycStatus==="approved"){

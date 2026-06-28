@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { IVehicle } from "@/models/vehicle.model";
 import { ImagePlus } from "lucide-react";
@@ -13,12 +13,18 @@ type PropsType = {
 };
 
 export default function PriceModal({ open, onClose, data }: PropsType) {
-  const [image, setImage] = useState<File | null>();
+  const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [baseFare, setBaseFare] = useState("");
   const [pricePerKM, setPricePerKM] = useState("");
   const [waitingCharge, setWaitingCharge] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(()=>{
+    if(data){
+      setPreview(data?.imageUrl || null)
+    }
+  },[data])
 
   const handleSubmit = async ()=>{
     try {
@@ -119,7 +125,7 @@ export default function PriceModal({ open, onClose, data }: PropsType) {
                   <input
                     type="text"
                     placeholder="Waiting Charge"
-                    value={baseFare}
+                    value={waitingCharge}
                     onChange={(e) => setWaitingCharge(e.target.value)}
                     className="w-full outline-none"
                   />
