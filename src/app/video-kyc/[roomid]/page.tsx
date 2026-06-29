@@ -1,14 +1,12 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
-import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt'
 import { RootState } from '@/redux/store'
 import { useSelector } from 'react-redux'
 import Image from 'next/image'
 import { CheckCircle, Mic, MicOff, PhoneOff, Video, VideoOff, X, XCircle } from 'lucide-react'
-import { useParams } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import axios from 'axios'
 import { AnimatePresence, motion } from 'motion/react'
-import { useRouter } from 'next/router'
 
 export default function page() {
 
@@ -95,6 +93,7 @@ export default function page() {
     const displayName = userData.role == "admin" ? "Admin" : `${userData?.name} (${userData?.email})`
 
     try{
+        const { ZegoUIKitPrebuilt } = await import('@zegocloud/zego-uikit-prebuilt')
         const appId = Number(process.env.NEXT_PUBLIC_ZEGO_APP_ID)
         const serverSecret = process.env.NEXT_PUBLIC_ZEGO_SERVER_SECRET
         const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(

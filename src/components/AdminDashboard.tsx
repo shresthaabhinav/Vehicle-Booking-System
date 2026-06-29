@@ -23,7 +23,7 @@ export default function AdminDashboard() {
   const [ stats, setStats ] = useState<Stats | null>(null)
   const [ activeTab, setActiveTab ] = useState<Tab>("partner")
   const [ partnerReviews, setPartnerReviews ] = useState<any>();
-  const [ pendingkyc, sendPendingkyc] = useState<any>();
+  const [ pendingkyc, setPendingkyc] = useState<any>();
   const [ vehicleReviews, setVehicleReviews ] = useState<any>();
 
   const handleGetData = async () =>{
