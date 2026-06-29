@@ -55,7 +55,7 @@ export default function PartnerDashboard() {
   }
 
   useEffect(()=>{
-    hnadleGetPricing()
+    handleGetPricing()
   },[])
 
   const goToStep =(step:Step)=>{

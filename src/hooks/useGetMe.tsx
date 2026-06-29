@@ -1,12 +1,14 @@
 'use client'
 import { setUserData } from '@/redux/userSlice'
 import axios from 'axios'
-import React, { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
+import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
 export default function useGetMe(enabled:boolean) {
 
     const dispatch = useDispatch()
+    const pathname = usePathname()
 
     useEffect(()=>{
 
@@ -23,5 +25,5 @@ export default function useGetMe(enabled:boolean) {
         
     }
     getMe()
-  },[enabled])
+  },[enabled, pathname, dispatch])
 }

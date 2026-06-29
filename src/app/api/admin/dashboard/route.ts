@@ -39,7 +39,9 @@ export async function GET(request: NextRequest){
         }))
 
         const pendingVehicles = await Vehicle.find({
-            status: "pending"
+            status: "pending",
+            baseFare: {$exists: true},
+            pricePerKM: {$exists: true}
         }).populate("owner")
 
         return NextResponse.json(
