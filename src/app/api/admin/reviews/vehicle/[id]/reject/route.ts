@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import connectDb from "@/lib/db";
-import User from "@/models/user.model";
 import Vehicle from "@/models/vehicle.model";
 import { NextRequest } from "next/server";
 
@@ -26,24 +25,14 @@ export async function POST(
     }
 
     vehicle.status="rejected"
-    vehicle.rejectionReason=undefined
+    vehicle.rejectionReason=reason
     await vehicle.save()
-
-    const partner = await User.findById(vehicle.owner)
-
-    if(!partner){
-    return Response.json({ message:"partner not found" }, { status: 200 });
-    }
-
-    partner.partnerOnBoardingSteps = 7
-
-    await partner.save()
 
     return Response.json(vehicle, { status: 200 });
 
   } catch (error) {
     return Response.json(
-      { message: `vehicle approve error ${error}` },
+      { message: `vehicle rejected error ${error}` },
       { status: 500 },
     );
   }
