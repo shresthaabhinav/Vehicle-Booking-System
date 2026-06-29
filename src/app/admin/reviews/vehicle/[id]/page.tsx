@@ -73,7 +73,7 @@ export default function page() {
         setRejectLoading(true)
         try {
           const { data } = await axios.get(`/api/admin/reviews/vehicle/${id}/reject`,{
-            rejectionReason
+            reason: rejectionReason
           });
           console.log(data)
           setRejectLoading(false)
@@ -227,7 +227,7 @@ export default function page() {
               animate={{ scale: 1 }}
               className="bg-white rounded-3xl p-6 w-full max-w-sm"
             >
-              <h2 className="text-lg font-bold">Approve Partner?</h2>
+              <h2 className="text-lg font-bold">Approve Vehicle?</h2>
               <p className="text-sm text-gray-500 mt-2">
                 Confirm all information has been verified.
               </p>
@@ -268,7 +268,7 @@ export default function page() {
               animate={{ scale: 1 }}
               className="bg-white rounded-3xl p-6 w-full max-w-sm"
             >
-              <h2 className="text-lg font-bold">Reject Partner?</h2>
+              <h2 className="text-lg font-bold">Reject Vehicle?</h2>
               <p className="text-sm text-gray-500 mt-2">
                 <textarea
                   placeholder="Enter rejection reason (required)"

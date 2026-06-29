@@ -48,6 +48,7 @@ export default function page() {
       });
       console.log(data);
       setLoading(false);
+      router.push("/");
     } catch (error) {
       setError(error?.response?.data?.message || "something went wrong");
       console.log(error);

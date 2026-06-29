@@ -38,6 +38,7 @@ export default function page() {
       
       const {data} = await axios.post("/api/partner/onboarding/documents",formdata)
       setLoading(false)
+      router.push("/")
     }catch(error:any){
       setError(error?.response?.data?.message ?? "Something went wrong")
       console.log(error)
