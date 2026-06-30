@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { IVehicle } from "@/models/vehicle.model";
 import { ImagePlus } from "lucide-react";
-import { FaRupeeSign } from "react-icons/fa6";
+import { TbCurrencyRupeeNepalese } from "react-icons/tb";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -26,8 +26,8 @@ export default function PriceModal({ open, onClose, data }: PropsType) {
     if(data){
       setPreview(data?.imageUrl || null)
       setBaseFare(data.baseFare?.toString() || "")
-      setPricePerKM(data.baseFare?.toString() || "")
-      setWaitingCharge(data.baseFare?.toString() || "")
+      setPricePerKM(data.pricePerKM?.toString() || "")
+      setWaitingCharge(data.waitingCharge?.toString() || "")
     }
   },[data])
 
@@ -35,7 +35,7 @@ export default function PriceModal({ open, onClose, data }: PropsType) {
     setLoading(true)
     try {
       const formData = new FormData()
-      formData.append("basefare",baseFare)
+      formData.append("baseFare",baseFare)
       formData.append("waitingCharge",waitingCharge)
       formData.append("pricePerKM", pricePerKM)
 
@@ -102,7 +102,7 @@ export default function PriceModal({ open, onClose, data }: PropsType) {
               <div>
                 <p className="text-sm font-semibold mb-1">Base Fare</p>
                 <div className="flex items-center gap-2 border rounded-xl px-4 py-3 bg-white">
-                  <FaRupeeSign size={18} />
+                  <TbCurrencyRupeeNepalese size={18} />
                   <input
                     type="text"
                     placeholder="baseFare"
@@ -116,7 +116,7 @@ export default function PriceModal({ open, onClose, data }: PropsType) {
               <div>
                 <p className="text-sm font-semibold mb-1">Price per KM</p>
                 <div className="flex items-center gap-2 border rounded-xl px-4 py-3 bg-white">
-                  <FaRupeeSign size={18} />
+                  <TbCurrencyRupeeNepalese size={18} />
                   <input
                     type="text"
                     placeholder="price per KM"
@@ -130,7 +130,7 @@ export default function PriceModal({ open, onClose, data }: PropsType) {
               <div>
                 <p className="text-sm font-semibold mb-1">Waiting Charge</p>
                 <div className="flex items-center gap-2 border rounded-xl px-4 py-3 bg-white">
-                  <FaRupeeSign size={18} />
+                  <TbCurrencyRupeeNepalese size={18} />
                   <input
                     type="text"
                     placeholder="Waiting Charge"
@@ -143,8 +143,19 @@ export default function PriceModal({ open, onClose, data }: PropsType) {
             </div>
 
             <div className="p-6 border-t flex gap-3">
-              <button className="flex-1 border rounded-xl py-2" onClick={onClose}>Cancel</button>
-              <button className="flex-1 bg-black text-white rounded-xl py-2" onClick={handleSubmit} disabled={loading}>{loading?"Saving...":"Save"}</button>
+              <button
+                className="flex-1 border rounded-xl py-2"
+                onClick={onClose}
+              >
+                Cancel
+              </button>
+              <button
+                className="flex-1 bg-black text-white rounded-xl py-2"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? "Saving..." : "Save"}
+              </button>
             </div>
           </motion.div>
         </motion.div>

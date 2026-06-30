@@ -7,7 +7,7 @@ import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import AnimatedCard from '@/components/AnimatedCard'
-import { FaRupeeSign } from 'react-icons/fa'
+import { TbCurrencyRupeeNepalese } from "react-icons/tb";
 interface IVehicle{
     owner: IUser,
     type: vehicleType,
@@ -155,12 +155,12 @@ export default function page() {
 
           <AnimatedCard
             title={"Pricing Configuration"}
-            icon={<FaRupeeSign size={18} />}
+            icon={<TbCurrencyRupeeNepalese size={18} />}
           >
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Base Fare</span>
               <span className="font-semibold flex items-center gap-1">
-                <FaRupeeSign size={13} />
+                <TbCurrencyRupeeNepalese size={13} />
                 {data?.baseFare || 0}
               </span>
             </div>
@@ -168,14 +168,14 @@ export default function page() {
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Price per KM</span>
               <span className="font-semibold flex items-center gap-1">
-                <FaRupeeSign size={13} />
+                <TbCurrencyRupeeNepalese size={13} />
                 {data?.pricePerKM || "-"}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Waiting Charge</span>
               <span className="font-semibold flex items-center gap-1">
-                <FaRupeeSign size={13} />
+                <TbCurrencyRupeeNepalese size={13} />
                 {data?.waitingCharge || "-"}
               </span>
             </div>
