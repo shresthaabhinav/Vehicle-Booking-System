@@ -27,7 +27,6 @@ export default async function Home() {
             <PublicHome />
           </>
         )}
-        <PublicHome />
         <Footer />
       </div>
     </>
