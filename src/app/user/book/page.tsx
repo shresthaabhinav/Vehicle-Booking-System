@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeft, Bike, Car, CheckCircle, LocateFixed, Phone, Truck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { vehicleType } from "@/models/vehicle.model";
+import axios from "axios";
 
 const stepVariants = {
   hidden: { opacity: 0, y: 16 },
@@ -29,6 +30,22 @@ export default function page() {
     !!pickUp,
     !!drop,
   ].filter(Boolean).length;
+
+  const useCurrentLocation = () => {
+    if(!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(async ({coords})=>{
+      try {
+        const {data} = await axios.get(`https://photon.komoot.io/reverse?lon=${coords.longitude}&lat=${coords.latitude}`)
+
+        if(data.features.length){
+          
+        }
+
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  }
 
   return (
     <div className="min-h-screen bg-zinc-100 flex items-center justify-center px-4 py-10">
@@ -232,6 +249,7 @@ export default function page() {
 
                       <motion.button
                         whileTap={{ scale: 0.88 }}
+                        onClick={useCurrentLocation}
                         className="w-8 h-8 rounded-xl bg-zinc-200 hover:bg-zinc-300 transition-colors flex items-center justify-center flex-shrink-0"
                       >
                         <LocateFixed size={14} className={`text-zinc-700`}/>
