@@ -24,6 +24,11 @@ export default function page() {
   const [mobile, setMobile] = useState("");
   const [pickUp, setPickUp] = useState("");
   const [drop, setDrop] = useState("");
+  const [pickUpCountry, setPickUpCountry] = useState("");
+  const [pickUpLat, setPickUpLat] = useState<Number>();
+  const [pickUpLon, setPickUpLon] = useState<Number>();
+  const [locating, setLocating] = useState(false)
+
   const progress = [
     !!vehicle,
     !!(mobile.length == 10),
@@ -33,16 +38,25 @@ export default function page() {
 
   const useCurrentLocation = () => {
     if(!navigator.geolocation) return;
+    setLocating(true)
     navigator.geolocation.getCurrentPosition(async ({coords})=>{
       try {
         const {data} = await axios.get(`https://photon.komoot.io/reverse?lon=${coords.longitude}&lat=${coords.latitude}`)
 
         if(data.features.length){
-          
+          const p = data.features[0].properties
+          const address = [p.name, p.street, p.city, p.state, p.country].filter(Boolean).join(",");
+          setPickUp(address)
+          setPickUpCountry(p.country)
+          setPickUpLat(coords.latitude)
+          setPickUpLon(coords.longitude)
+          setLocating(false)
+
         }
 
       } catch (error) {
         console.log(error)
+        setLocating(false)
       }
     })
   }
@@ -250,9 +264,10 @@ export default function page() {
                       <motion.button
                         whileTap={{ scale: 0.88 }}
                         onClick={useCurrentLocation}
+                        disabled={locating}
                         className="w-8 h-8 rounded-xl bg-zinc-200 hover:bg-zinc-300 transition-colors flex items-center justify-center flex-shrink-0"
                       >
-                        <LocateFixed size={14} className={`text-zinc-700`}/>
+                        <LocateFixed size={14} className={`text-zinc-700 ${locating ? "animate-spin" : ""}`}/>
                       </motion.button>
                     </div>
 
