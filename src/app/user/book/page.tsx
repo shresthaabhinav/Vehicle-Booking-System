@@ -1,30 +1,34 @@
-'use client'
-import React, { useState } from 'react'
-import { motion } from 'motion/react'
-import { ArrowLeft, Bike, Car, Truck } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { vehicleType } from '@/models/vehicle.model';
+"use client";
+import React, { useState } from "react";
+import { motion } from "motion/react";
+import { ArrowLeft, Bike, Car, CheckCircle, Truck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { vehicleType } from "@/models/vehicle.model";
 
 const stepVariants = {
   hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0 }
+  visible: { opacity: 1, y: 0 },
 };
 
 const VEHICLES = [
-  { id: "bike",    label: "Bike",    Icon: Bike,  desc: "Quick & affordable" },
-  { id: "auto",    label: "Auto",    Icon: Car,   desc: "Everyday rides"     },
-  { id: "car",     label: "Car",     Icon: Car,   desc: "Comfort rides"      },
-  { id: "loading", label: "Loading", Icon: Truck, desc: "Small cargo"        },
-  { id: "truck",   label: "Truck",   Icon: Truck, desc: "Heavy transport"    },
+  { id: "bike", label: "Bike", Icon: Bike, desc: "Quick & affordable" },
+  { id: "auto", label: "Auto", Icon: Car, desc: "Everyday rides" },
+  { id: "car", label: "Car", Icon: Car, desc: "Comfort rides" },
+  { id: "loading", label: "Loading", Icon: Truck, desc: "Small cargo" },
+  { id: "truck", label: "Truck", Icon: Truck, desc: "Heavy transport" },
 ];
 export default function page() {
-
-  const router = useRouter()
-  const [vehicle, setVehicle] = useState<vehicleType>()
-  const [mobile, setMobile] = useState("")
-  const [pickUp, setPickUp] = useState("")
-  const [drop, setDrop] = useState("")
-  const progress = [!!vehicle, !!(mobile.length==10), !!pickUp, !!drop].filter(Boolean).length
+  const router = useRouter();
+  const [vehicle, setVehicle] = useState<vehicleType>();
+  const [mobile, setMobile] = useState("");
+  const [pickUp, setPickUp] = useState("");
+  const [drop, setDrop] = useState("");
+  const progress = [
+    !!vehicle,
+    !!(mobile.length == 10),
+    !!pickUp,
+    !!drop,
+  ].filter(Boolean).length;
 
   return (
     <div className="min-h-screen bg-zinc-100 flex items-center justify-center px-4 py-10">
@@ -88,9 +92,75 @@ export default function page() {
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
-                {VEHICLES.map((v,i)=>{
-                  return <motion.div></motion.div>
+                {VEHICLES.map((v, i) => {
+                  const active = vehicle == v.id;
+                  return (
+                    <motion.div
+                      key={v.id}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.07 + i * 0.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setVehicle(v.id as vehicleType)}
+                      className={`relative p-3.5 rounded-2xl border flex items-center gap-3 text-left transition-all duration-200 ${
+                        active
+                          ? "bg-zinc-900 border-zinc-900 shadow-lg"
+                          : "bg-zinc-50 border-zinc-200 hover:border-zinc-400"
+                      }`}
+                    >
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${active ? "bg-white" : "bg-zinc-200"}`}
+                      >
+                        <v.Icon
+                          size={18}
+                          className={active ? "text-zinc-900" : "text-zinc-600"}
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <p
+                          className={`text-sm font-bold truncate ${active ? "text-white" : "text-zinc-900"}`}
+                        >
+                          {v.label}
+                        </p>
+                        <p
+                          className={`text-[10px] truncate ${active ? "text-zinc-400" : "text-zinc-400"}`}
+                        >
+                          {v.desc}
+                        </p>
+                      </div>
+
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute top-2.5 right-2.5"
+                      >
+                        <CheckCircle
+                          size={13}
+                          className="text-white fill-white/20"
+                        />
+                      </motion.div>
+                    </motion.div>
+                  );
                 })}
+              </div>
+            </motion.div>
+
+            <div className="h-px bg-zinc-200" />
+
+            <motion.div
+              variants={stepVariants}
+              initial={"hidden"}
+              animate={"visible"}
+              transition={{ delay: 0.05 }}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-5 h-5 rounded-full bg-zinc-900 flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-[9px] font-black">2</span>
+                </div>
+
+                <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest">
+                  Mobile
+                </p>
               </div>
             </motion.div>
           </div>
