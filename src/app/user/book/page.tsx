@@ -18,6 +18,18 @@ const VEHICLES = [
   { id: "loading", label: "Loading", Icon: Truck, desc: "Small cargo" },
   { id: "truck", label: "Truck", Icon: Truck, desc: "Heavy transport" },
 ];
+
+type Place={
+  id: string;
+  name: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  countrycode?: string;
+  lat: number;
+  lng: number;
+}
+
 export default function page() {
   const router = useRouter();
   const [vehicle, setVehicle] = useState<vehicleType>();
@@ -28,6 +40,7 @@ export default function page() {
   const [pickUpLat, setPickUpLat] = useState<Number>();
   const [pickUpLon, setPickUpLon] = useState<Number>();
   const [locating, setLocating] = useState(false)
+  const [pickUpSuggestions, setPickUpSuggestions] = useState<Place[]>([])
 
   const progress = [
     !!vehicle,
@@ -35,6 +48,32 @@ export default function page() {
     !!pickUp,
     !!drop,
   ].filter(Boolean).length;
+
+  const searchAddress = async (q:string, setResults:(r:Place[])=>void)=>{
+    try {
+      if(!q || q.trim().length<3){
+        setResults([])
+        return;
+      }
+      const {data} = await axios.get(`https://photon.komoot.io/api/?q=${encodeURIComponent(q.trim())}&limit=8&lang=en`)
+      const results: Place[] = (data.features ?? []).map((f: any) => ({
+        id: String(f.properties.osm_id),
+        name: f.properties.name,
+        city: f.properties.city,
+        state: f.properties.state,
+        country: f.properties.country,
+        countrycode: f.properties.countrycode,
+        lat: f.geometry.coordinates[1],
+        lng: f.geometry.coordinates[0],
+      }));
+      setResults(results)
+    } catch (error) {
+      console.log(error)
+      setResults([]);
+    }
+  }
+
+  const suggestion = (p:Place)=>[p.name, p.city, p.state, p.country].filter(Boolean).join(",");
 
   const useCurrentLocation = () => {
     if(!navigator.geolocation) return;
@@ -50,6 +89,7 @@ export default function page() {
           setPickUpCountry(p.country)
           setPickUpLat(coords.latitude)
           setPickUpLon(coords.longitude)
+          setPickUpSuggestions([])
           setLocating(false)
 
         }
@@ -247,35 +287,60 @@ export default function page() {
               </div>
 
               <div className="bg-zinc-50 border border-zinc-200 rounded-2xl overflow-visible">
-                  <div className="relative z-50">
-                    <div className="flex items-center gap-3 px-4 py-3.5 focus-within:bg-white rounded-t-2xl transition-colors">
-                      <div className="flex flex-col items-center flex-shrink-0">
-                          <div className="w-3 h-3 rounded-full bg-zinc-900 border-2 border-white shadow"/>
-                          <div className="w-px h-5 bg-zinc-300 mt-1"/>
-                      </div>
-
-                      <input
-                        onChange={(e)=>setPickUp(e.target.value)}
-                        value={pickUp}
-                        placeholder="Pickup location"
-                        className="flex-1 bg-transparent text-sm font-semibold text-zinc-900 placeholder:text-zinc-400 outline-none"
-                      />
-
-                      <motion.button
-                        whileTap={{ scale: 0.88 }}
-                        onClick={useCurrentLocation}
-                        disabled={locating}
-                        className="w-8 h-8 rounded-xl bg-zinc-200 hover:bg-zinc-300 transition-colors flex items-center justify-center flex-shrink-0"
-                      >
-                        <LocateFixed size={14} className={`text-zinc-700 ${locating ? "animate-spin" : ""}`}/>
-                      </motion.button>
+                <div className="relative z-50">
+                  <div className="flex items-center gap-3 px-4 py-3.5 focus-within:bg-white rounded-t-2xl transition-colors">
+                    <div className="flex flex-col items-center flex-shrink-0">
+                      <div className="w-3 h-3 rounded-full bg-zinc-900 border-2 border-white shadow" />
+                      <div className="w-px h-5 bg-zinc-300 mt-1" />
                     </div>
 
+                    <input
+                      onChange={(e) => {
+                        setPickUp(e.target.value);
+                        searchAddress(e.target.value, setPickUpSuggestions);
+                      }}
+                      value={pickUp}
+                      placeholder="Pickup location"
+                      className="flex-1 bg-transparent text-sm font-semibold text-zinc-900 placeholder:text-zinc-400 outline-none"
+                    />
+
+                    <motion.button
+                      whileTap={{ scale: 0.88 }}
+                      onClick={useCurrentLocation}
+                      disabled={locating}
+                      className="w-8 h-8 rounded-xl bg-zinc-200 hover:bg-zinc-300 transition-colors flex items-center justify-center flex-shrink-0"
+                    >
+                      <LocateFixed
+                        size={14}
+                        className={`text-zinc-700 ${locating ? "animate-spin" : ""}`}
+                      />
+                    </motion.button>
                   </div>
+
+                  <AnimatePresence>
+                    {pickUpSuggestions?.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -4, scale: 0.98 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute left-0 right-0 top-full mt-1 bg-white border border-zinc-200 rounded-2xl shadow-xl max-h-52 overflow-y-auto z-50"
+                      >
+                        {pickUpSuggestions.map((p, i) => (
+                          <motion.div
+                            key={p.id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: i * 0.04 }}
+                            className="flex items-center"
+                          ></motion.div>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
-
             </motion.div>
-
           </div>
         </div>
       </motion.div>
