@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, Bike, Car, CheckCircle, ChevronRight, LocateFixed, MapPin, Phone, Truck } from "lucide-react";
+import { ArrowLeft, Bike, Car, CheckCircle, ChevronRight, LocateFixed, MapPin, Navigation, Phone, Truck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { vehicleType } from "@/models/vehicle.model";
 import axios from "axios";
@@ -53,14 +53,14 @@ export default function page() {
     !!drop,
   ].filter(Boolean).length;
 
-  const searchAddress = async (q:string, setResults:(r:Place[])=>void)=>{
+  const searchAddress = async (q:string, setResults:(r:Place[])=>void, restrict?:string | null)=>{
     try {
       if(!q || q.trim().length<3){
         setResults([])
         return;
       }
       const {data} = await axios.get(`https://photon.komoot.io/api/?q=${encodeURIComponent(q.trim())}&limit=8&lang=en`)
-      const results: Place[] = (data.features ?? []).map((f: any) => ({
+      let results: Place[] = (data.features ?? []).map((f: any) => ({
         id: String(f.properties.osm_id),
         name: f.properties.name,
         city: f.properties.city,
@@ -70,6 +70,9 @@ export default function page() {
         lat: f.geometry.coordinates[1],
         lng: f.geometry.coordinates[0],
       }));
+      if(restrict){
+        results = results.filter(r=>r.country==restrict)
+      }
       setResults(results)
     } catch (error) {
       console.log(error)
@@ -291,7 +294,7 @@ export default function page() {
               </div>
 
               <div className="bg-zinc-50 border border-zinc-200 rounded-2xl overflow-visible">
-                <div className="relative z-20">
+                <div className="relative z-30">
                   <div className="flex items-center gap-3 px-4 py-3.5 focus-within:bg-white rounded-t-2xl transition-colors">
                     <div className="flex flex-col items-center flex-shrink-0">
                       <div className="w-3 h-3 rounded-full bg-zinc-900 border-2 border-white shadow" />
@@ -341,6 +344,7 @@ export default function page() {
                               setPickUpCountry(p.country ?? "");
                               setPickUpLat(p.lat);
                               setPickUpLon(p.lng);
+                              setPickUpSuggestions([]);
                             }}
                             className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-zinc-50 transition-colors border-b border-zinc-100 last:border-0"
                           >
@@ -364,23 +368,27 @@ export default function page() {
 
                 <div className="h-px bg-zinc-200" />
 
-                <div className="relative z-20">
+                <div className="relative z-10">
                   <div className="flex items-center gap-3 px-4 py-3.5 focus-within:bg-white rounded-t-2xl transition-colors">
                     <div className="flex flex-col items-center flex-shrink-0">
                       <div className="w-3 h-3 rounded-full bg-zinc-900 border-2 border-white shadow" />
-                     
                     </div>
 
                     <input
                       onChange={(e) => {
                         setDrop(e.target.value);
-                        searchAddress(e.target.value, setDropSuggestions);
+                        searchAddress(e.target.value, setDropSuggestions, pickUpCountry);
                       }}
+                      disabled={!pickUpCountry}
                       value={drop}
-                      placeholder="Drop location"
+                      placeholder={pickUpCountry ? "Drop Location" : "Select Pick up Location First"}
                       className="flex-1 bg-transparent text-sm font-semibold text-zinc-900 placeholder:text-zinc-400 outline-none"
                     />
 
+                    <Navigation
+                      size={14}
+                      className="text-zinc-300 flex-shrink-0"
+                    />
                   </div>
 
                   <AnimatePresence>
@@ -403,10 +411,11 @@ export default function page() {
                               setDropCountry(p.country ?? "");
                               setDropLat(p.lat);
                               setDropLon(p.lng);
+                              setDropSuggestions([]);
                             }}
                             className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-zinc-50 transition-colors border-b border-zinc-100 last:border-0"
                           >
-                            <MapPin
+                            <Navigation
                               size={13}
                               className="text-zinc-400 flex-shrink-0"
                             />
