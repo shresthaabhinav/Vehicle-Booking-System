@@ -52,7 +52,7 @@ export default function page() {
     !!pickUp,
     !!drop,
   ].filter(Boolean).length;
-
+  const canContinue = !!(vehicle && mobile && pickUp && drop && pickUpLat && pickUpLon && dropLat && dropLon)
   const searchAddress = async (q:string, setResults:(r:Place[])=>void, restrict?:string | null)=>{
     try {
       if(!q || q.trim().length<3){
@@ -150,7 +150,7 @@ export default function page() {
         </div>
 
         <div className="bg-white rounded-3xl border border-zinc-200 shadow-[0_8px_40px_rgba(0,0,0,0.08)] overflow-visible">
-          <div className="h-1 bg-zinc-900 w-full" />
+          <div className="h-1 bg-zinc-900 w-[90%] m-auto"/>
 
           <div className="p-6 space-y-7">
             <motion.div
@@ -433,6 +433,22 @@ export default function page() {
                   </AnimatePresence>
                 </div>
               </div>
+            </motion.div>
+
+            <motion.div
+              variants={stepVariants}
+              initial="hidden"
+              animate="visible"
+              transition={{ delay: 0.3 }}
+              >
+                <motion.button
+                  whileTap = {{ scale: 0.97 }}
+                  whileHover = {canContinue ? {scale: 1.02} : {}}
+                  disabled = {!canContinue}
+                  className="w-full h-14 rounded-2xl bg-zinc-900 hover:bg-black disabled:opacity-3 text-white font-black text-sm tracking-wide flex items-center justify-center gap-2.5 transition-colors shadow-lg disabled:shadow-none"
+                >
+                  <span></span>
+                </motion.button>
             </motion.div>
           </div>
         </div>
