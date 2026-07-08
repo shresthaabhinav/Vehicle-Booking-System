@@ -29,14 +29,16 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
 
   useEffect(()=>{
     if(pickUp && drop){
+      (async()=>{
+        const a = geoCoding(pickUp);
+        const b = geoCoding(drop);
+        if (!a || !b) {
+          return;
+        }
+        setP1(a);
+        setP2(b);
+      })
       
-      const a = geoCoding(pickUp)
-      const b = geoCoding(drop)
-      if(!a || !b){
-        return
-      }
-      setP1(a)
-      setP2(b)
     }
   },[pickUp, drop])
 
