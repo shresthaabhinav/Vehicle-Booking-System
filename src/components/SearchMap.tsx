@@ -1,13 +1,22 @@
 'use client'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { MapContainer, TileLayer } from 'react-leaflet'
+import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 
 type props={
   pickUp: string,
   drop: string,
   onChange: (p: string, d: string) => void,
   onDistance: (d:number) =>void
+}
+
+function FitBounds({ p1, p2 }: { p1: [number, number], p2:[number, number] }) {
+  const map = useMap()
+  useEffect(()=>{
+    map.invalidateSize()
+    map.fitBounds([p1, p2],{padding:[72,72], maxZoom:15, animate: true, duration:1})
+  },[p1,p2,map])
+  return null
 }
 
 export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
@@ -30,22 +39,24 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
   useEffect(()=>{
     if(pickUp && drop){
       (async()=>{
-        const a = geoCoding(pickUp);
-        const b = geoCoding(drop);
+        const a = await geoCoding(pickUp);
+        const b = await geoCoding(drop);
         if (!a || !b) {
-          return;
+          return
         }
-        setP1(a);
-        setP2(b);
-      })
+        setP1(a)
+        setP2(b)
+      })()
       
     }
   },[pickUp, drop])
 
   return (
     <div className='relative h-full w-full bg-zinc-100'>
-      <MapContainer style={{ width: "100%", height: "100%" }} center={[0,0]} zoom={13}>
+      <MapContainer style={{ width: "100%", height: "100%" }} center={p1 ?? [0,0]} zoom={13}>
       <TileLayer attribution='&copy; <a href="https://carto.com/">"CARTO"</a> contributors' url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"/>
+
+      {p1 && p2 && <FitBounds p1={p1} p2={p2}/>}
       </MapContainer>
     </div>
   )
