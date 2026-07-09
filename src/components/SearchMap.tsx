@@ -1,7 +1,7 @@
 'use client'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { MapContainer, TileLayer, useMap } from 'react-leaflet'
+import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet'
 
 type props={
   pickUp: string,
@@ -18,6 +18,27 @@ function FitBounds({ p1, p2 }: { p1: [number, number], p2:[number, number] }) {
   },[p1,p2,map])
   return null
 }
+
+const pickUpIcon = new L.DivIcon({
+  html: `<div style="display:flex; flex-direction:column; align-items: center; filter:drop-shadow(0 6px 18px rgba(0, 0, 0, 0.22)">
+            <div style="
+            background: #0a0a0a; color: #fff;
+            padding: 5px 14px; border-radius: 100px;
+            font-size: 10px; font-weight: 800; letter-spacing: 0.14em;
+            text-transform: uppercase; white-space: nowrap;
+            font-family: -apple-system, system-ui, sans-serif;
+            box-shadow: 0 2px 12px rgba(0, 0 ,0, 0.25);
+            ">
+            PICKUP
+            </div>
+            <div style="width:2px; height:10px; background: #0a0a0a; opacity: 0.4"></div>
+            <div style="
+            width:13px; height: 13px; background: #0a0a0a; border-radius:50%; border:3px solid #fff; 
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.15), 0 3px 10px rgba(0, 0, 0, 0.3); 
+            ">
+            </div>
+        </div>`
+})
 
 export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
 
@@ -52,12 +73,22 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
   },[pickUp, drop])
 
   return (
-    <div className='relative h-full w-full bg-zinc-100'>
-      <MapContainer style={{ width: "100%", height: "100%" }} center={p1 ?? [0,0]} zoom={13}>
-      <TileLayer attribution='&copy; <a href="https://carto.com/">"CARTO"</a> contributors' url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"/>
+    <div className="relative h-full w-full bg-zinc-100">
+      <MapContainer
+        style={{ width: "100%", height: "100%" }}
+        center={p1 ?? [0, 0]}
+        zoom={13}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://carto.com/">"CARTO"</a> contributors'
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
+        />
 
-      {p1 && p2 && <FitBounds p1={p1} p2={p2}/>}
+        {p1 && p2 && <FitBounds p1={p1} p2={p2} />}
+        {p1 && <Marker position={p1!} />}
+
+        {p2 && <Marker position={p2!} />}
       </MapContainer>
     </div>
-  )
+  );
 }
