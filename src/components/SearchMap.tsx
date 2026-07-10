@@ -37,8 +37,35 @@ const pickUpIcon = new L.DivIcon({
             box-shadow: 0 0 0 2px rgba(0,0,0,0.15), 0 3px 10px rgba(0, 0, 0, 0.3); 
             ">
             </div>
-        </div>`
+        </div>`,
+        className: "",
+        iconSize: [90, 58],
+        iconAnchor: [45, 58]
 })
+
+const dropIcon = new L.DivIcon({
+  html: `<div style="display:flex; flex-direction:column; align-items: center; filter:drop-shadow(0 6px 18px rgba(0, 0, 0, 0.22)">
+            <div style="
+            background: #0a0a0a; color: #fff;
+            padding: 5px 14px; border-radius: 100px;
+            font-size: 10px; font-weight: 800; letter-spacing: 0.14em;
+            text-transform: uppercase; white-space: nowrap;
+            font-family: -apple-system, system-ui, sans-serif;
+            box-shadow: 0 2px 12px rgba(0, 0 ,0, 0.25);
+            ">
+            DROP
+            </div>
+            <div style="width:2px; height:10px; background: #0a0a0a; opacity: 0.4"></div>
+            <div style="
+            width:13px; height: 13px; background: #0a0a0a; border-radius:50%; border:3px solid #fff; 
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.15), 0 3px 10px rgba(0, 0, 0, 0.3); 
+            ">
+            </div>
+        </div>`,
+  className: "",
+  iconSize: [90, 58],
+  iconAnchor: [45, 58],
+});
 
 export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
 
@@ -54,6 +81,16 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
     } catch (error) {
       console.log(error)
       return null
+    }
+  }
+
+  const loadRoute=async ()=>{
+    try {
+      const { data } = await axios.get(
+        `https://router.project-osrm.org/route/v1/driving/{longitude1},{latitude1};{longitude2},{latitude2}?overview=full&geometries=geojson`,
+      );
+    } catch (error) {
+      
     }
   }
 
@@ -85,9 +122,9 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
         />
 
         {p1 && p2 && <FitBounds p1={p1} p2={p2} />}
-        {p1 && <Marker position={p1!} />}
+        {p1 && <Marker position={p1!} icon={pickUpIcon}/>}
 
-        {p2 && <Marker position={p2!} />}
+        {p2 && <Marker position={p2!} icon={dropIcon}/>}
       </MapContainer>
     </div>
   );
