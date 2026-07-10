@@ -71,6 +71,7 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
 
   const [p1, setP1] = useState<[number,number]>()
   const [p2, setP2] = useState<[number,number]>()
+  const [route, setRoute] = useState<[number, number]>();
 
   const geoCoding = async (q: string):Promise<[number, number] | null> =>{
     try {
@@ -84,13 +85,17 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
     }
   }
 
-  const loadRoute=async ()=>{
+  const loadRoute=async (p:[number, number], d:[number, number])=>{
     try {
       const { data } = await axios.get(
-        `https://router.project-osrm.org/route/v1/driving/{longitude1},{latitude1};{longitude2},{latitude2}?overview=full&geometries=geojson`,
+        `https://router.project-osrm.org/route/v1/driving/${p[1]},${p[2]};${d[1]},${d[0]}?overview=full&geometries=geojson`,
       );
+      console.log(data)
+      if (!data.routes.length) return;
+      setRoute(data.routes[0].geometry.coordinates.map(([lon,lat]:number[])=>[lat,lon]))
+      const distKm = data.routes[0].distance
     } catch (error) {
-      
+      console.log(error)
     }
   }
 
@@ -102,6 +107,7 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
         if (!a || !b) {
           return
         }
+        await loadRoute(a,b)
         setP1(a)
         setP2(b)
       })()
