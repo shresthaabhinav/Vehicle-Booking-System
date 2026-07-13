@@ -1,7 +1,8 @@
 'use client'
 import axios from 'axios'
+import { AnimatePresence } from 'motion/react'
 import React, { useEffect, useState } from 'react'
-import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet'
+import { MapContainer, Marker, Polyline, TileLayer, useMap } from 'react-leaflet'
 
 type props={
   pickUp: string,
@@ -71,7 +72,9 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
 
   const [p1, setP1] = useState<[number,number]>()
   const [p2, setP2] = useState<[number,number]>()
-  const [route, setRoute] = useState<[number, number]>();
+  const [route, setRoute] = useState<[number, number][]>([])
+  const [km, setKm] = useState<number|null>()
+  const [ready, setReady] = useState(false)
 
   const geoCoding = async (q: string):Promise<[number, number] | null> =>{
     try {
@@ -88,18 +91,35 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
   const loadRoute=async (p:[number, number], d:[number, number])=>{
     try {
       const { data } = await axios.get(
-        `https://router.project-osrm.org/route/v1/driving/${p[1]},${p[2]};${d[1]},${d[0]}?overview=full&geometries=geojson`,
+        `https://router.project-osrm.org/route/v1/driving/${p[1]},${p[0]};${d[1]},${d[0]}?overview=full&geometries=geojson`,
       );
       console.log(data)
       if (!data.routes.length) return;
       setRoute(data.routes[0].geometry.coordinates.map(([lon,lat]:number[])=>[lat,lon]))
-      const distKm = data.routes[0].distance
+      const distKm =+ ((data.routes[0].distance)/1000).toFixed(2)
+      setKm(distKm)
+      onDistance(distKm)
     } catch (error) {
       console.log(error)
     }
   }
 
+  const dragPickup=async (lat: number, lon: number)=>{
+    setP1([lat,lon])
+    if(p2){
+    loadRoute([lat, lon], p2)
+    }
+  }
+
+  const dragDrop = async (lat: number, lon: number) => {
+    setP2([lat, lon]);
+    if (p1) {
+      loadRoute(p1, [lat, lon])
+    }
+  }
+
   useEffect(()=>{
+    setReady(false)
     if(pickUp && drop){
       (async()=>{
         const a = await geoCoding(pickUp);
@@ -110,6 +130,7 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
         await loadRoute(a,b)
         setP1(a)
         setP2(b)
+        setReady(true)
       })()
       
     }
@@ -121,6 +142,7 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
         style={{ width: "100%", height: "100%" }}
         center={p1 ?? [0, 0]}
         zoom={13}
+        zoomControl={false}
       >
         <TileLayer
           attribution='&copy; <a href="https://carto.com/">"CARTO"</a> contributors'
@@ -128,10 +150,52 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
         />
 
         {p1 && p2 && <FitBounds p1={p1} p2={p2} />}
-        {p1 && <Marker position={p1!} icon={pickUpIcon}/>}
+        {p1 && (
+          <Marker
+            position={p1!}
+            icon={pickUpIcon}
+            draggable
+            eventHandlers={{
+              dragend: (e) => {
+                const m = e.target.getLatLng();
+                dragPickup(m.lat, m.lng);
+              },
+            }}
+          />
+        )}
 
-        {p2 && <Marker position={p2!} icon={dropIcon}/>}
+        {p2 && (
+          <Marker
+            position={p2!}
+            icon={dropIcon}
+            draggable
+            eventHandlers={{
+              dragend: (e) => {
+                const m = e.target.getLatLng();
+                dragDrop(m.lat, m.lng);
+              },
+            }}
+          />
+        )}
+
+        {route.length > 0 && (
+          <>
+            <Polyline
+              positions={route}
+              pathOptions={{
+                color: "#0a0a0a",
+                weight: 4,
+                lineCap: "round",
+                lineJoin: "round",
+              }}
+            />
+          </>
+        )}
       </MapContainer>
+
+      <AnimatePresence>
+        
+      </AnimatePresence>
     </div>
   );
 }
