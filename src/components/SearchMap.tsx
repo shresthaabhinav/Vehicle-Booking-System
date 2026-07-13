@@ -74,7 +74,7 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
   const [p1, setP1] = useState<[number,number]>()
   const [p2, setP2] = useState<[number,number]>()
   const [route, setRoute] = useState<[number, number][]>([])
-  const [km, setKm] = useState<number|null>()
+  const [km, setKm] = useState<number|null>(0)
   const [ready, setReady] = useState(false)
 
   const geoCoding = async (q: string):Promise<[number, number] | null> =>{
@@ -87,6 +87,17 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
       console.log(error)
       return null
     }
+  }
+
+  const reverseGeoCoding = async (lat:number, lon:number)=>{
+    
+      const {data} = await axios.get(`https://photon.komoot.io/reverse?lon=${lon}&lat=${lat}`)
+
+      if(!data.features.length)
+        return;
+        const p =data.features[0].properties
+        return [p.name, p.street, p.city, p.state, p.country].filter(Boolean).join(",")
+    
   }
 
   const loadRoute=async (p:[number, number], d:[number, number])=>{
@@ -106,17 +117,21 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
   }
 
   const dragPickup=async (lat: number, lon: number)=>{
+    const addr = await reverseGeoCoding(lat, lon)
     setP1([lat,lon])
     if(p2){
     loadRoute([lat, lon], p2)
     }
+    onChange?.(addr!,drop)
   }
 
   const dragDrop = async (lat: number, lon: number) => {
+    const addr = await reverseGeoCoding(lat, lon)
     setP2([lat, lon]);
     if (p1) {
       loadRoute(p1, [lat, lon])
     }
+    onChange?.(pickUp, addr!)
   }
 
   useEffect(()=>{
@@ -231,11 +246,12 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
             animate={{}}
             exit={{}}
             transition={{}}
-            className='absolute bottom-6 left-4 z-[500] flex items-center gap-2 bg-white border border-zinc-200 px-3.5 py-2 rounded-xl shadow-lg'
+            className='absolute bottom-20 left-4 z-[500] flex items-center gap-2 bg-white border border-zinc-200 px-3.5 py-2 rounded-xl shadow-lg'
           >
             <Navigation2 size={13} className='text-zinc-900'/>
             <span className='text-zinc-900 text-xs font-bold'>{km} km</span>
             <span className='w-px h-3 bg-zinc-200'/>
+            <span> ~{Math.max(3, Math.round((km! / 25) * 60))} min</span>
           </motion.div>
         )}
       </AnimatePresence>

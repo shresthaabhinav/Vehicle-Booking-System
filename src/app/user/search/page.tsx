@@ -40,6 +40,16 @@ export default function page() {
           onDistance={setKm}
         />
       </div>
+
+      <motion.div
+        initial={{ y: 60, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 100, damping: 22 }}
+        className="relative z-20 -mt-10 bg-white rounded-t-[28px] border-t border-zinc-200 [0_-8px_40px_rgba(0,0,0,0.08)] pt-5 pb-20 min-h-[52vh]">
+          <div>
+            
+          </div>
+      </motion.div>
     </div>
   );
 }
