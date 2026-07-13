@@ -1,6 +1,7 @@
 'use client'
 import axios from 'axios'
-import { AnimatePresence } from 'motion/react'
+import { MapPin, Navigation2 } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import React, { useEffect, useState } from 'react'
 import { MapContainer, Marker, Polyline, TileLayer, useMap } from 'react-leaflet'
 
@@ -11,7 +12,7 @@ type props={
   onDistance: (d:number) =>void
 }
 
-function FitBounds({ p1, p2 }: { p1: [number, number], p2:[number, number] }) {
+function FitBounds({ p1, p2 }: { p1: [number, number], p2: [number, number] }) {
   const map = useMap()
   useEffect(()=>{
     map.invalidateSize()
@@ -194,7 +195,49 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
       </MapContainer>
 
       <AnimatePresence>
-        
+        {!ready && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.45 }}
+            className="absolute inset-0 z-[999] bg-white/90 backdrop-blur-md flex flex-col items-center justify-center gap-4"
+          >
+            <div className="relative w-14 h-14 flex items-center justify-center">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1.1, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 rounded-full border-2 border-transparent border-t-zinc-900"
+              />
+              <motion.div
+                animate={{ rotate: -360 }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-2 rounded-full border-2 border-transparent border-t-zinc-300"
+              />
+              <MapPin size={15} className="text-zinc-800" />
+            </div>
+
+            <div className='text-center'>
+              <p className='text-zinc-900 text-xs font-black tracking-[0.22em] uppercase'>Loading Map</p>
+              <p className='text-zinc-400 text-[10px] font-medium tracking-wider mt-0.5'>Plotting your route...</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {ready && km!==null && (
+          <motion.div
+            initial={{}}
+            animate={{}}
+            exit={{}}
+            transition={{}}
+            className='absolute bottom-6 left-4 z-[500] flex items-center gap-2 bg-white border border-zinc-200 px-3.5 py-2 rounded-xl shadow-lg'
+          >
+            <Navigation2 size={13} className='text-zinc-900'/>
+            <span className='text-zinc-900 text-xs font-bold'>{km} km</span>
+            <span className='w-px h-3 bg-zinc-200'/>
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );
