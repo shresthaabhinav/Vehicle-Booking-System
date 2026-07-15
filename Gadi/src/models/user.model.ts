@@ -5,22 +5,28 @@ type videoKycStatus=
     "not_required" | "pending" | "in_progress" | "approved" | "rejected";
 
 export interface IUser extends Document {
-    name: string;
-    email: string;
-    password?: string;
-    role: "user" | "partner" | "admin";
-    isEmailVerified: boolean;
-    otp?: string;
-    otpExpiresAt?: Date;
-    partnerOnBoardingSteps: number;
-    mobileNumber?: string;
-    partnerStatus: "pending" | "approved" | "rejected"
-    rejectionReason?: string;
-    videoKycStatus: videoKycStatus;
-    videoKycRoomId: string;
-    videoKycRejectionReason: string;
-    createdAt: Date;
-    updatedAt: Date;
+  name: string;
+  email: string;
+  password?: string;
+  role: "user" | "partner" | "admin";
+  isEmailVerified: boolean;
+  otp?: string;
+  otpExpiresAt?: Date;
+  partnerOnBoardingSteps: number;
+  mobileNumber?: string;
+  partnerStatus: "pending" | "approved" | "rejected";
+  rejectionReason?: string;
+  videoKycStatus: videoKycStatus;
+  videoKycRoomId: string;
+  videoKycRejectionReason: string;
+  socketId: string | null;
+  location:?{
+    type: "Point",
+    coordinates: [number, number]
+  }
+  isOnline: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -80,9 +86,27 @@ const userSchema = new mongoose.Schema<IUser>(
     otpExpiresAt: {
       type: Date,
     },
+    socketId: {
+      type: String,
+      default: null
+    },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"]
+      },
+      coordinates:[Number]
+    },
+    isOnline:{
+      type: Boolean,
+      default: false,
+      index: true
+    }
   },
   { timestamps: true },
 );
+
+userSchema.index("")
 
 const User =
     mongoose.models.User || mongoose.model<IUser>("User", userSchema)
