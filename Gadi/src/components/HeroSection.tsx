@@ -1,8 +1,10 @@
 "use client"
+import { getSocket } from "@/lib/socket";
 import { RootState } from "@/redux/store";
 import { Bike, Bus, Car, Truck } from "lucide-react";
 import { motion, useScroll } from "motion/react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 export default function HeroSection({onAuthRequired}:{onAuthRequired:()=>void}) {
@@ -10,6 +12,10 @@ export default function HeroSection({onAuthRequired}:{onAuthRequired:()=>void}) 
   const {userData} = useSelector((state:RootState)=>state.user);
   const router = useRouter();
 
+  useEffect(()=>{
+    const socket = getSocket()
+    socket.emit("identity",{userId:userData?._id})
+  },[])
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
       <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage:"url('/heroImage.jpg ')"}}/>

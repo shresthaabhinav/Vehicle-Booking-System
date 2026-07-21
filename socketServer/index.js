@@ -26,6 +26,13 @@ const io = new Server(server, {
   },
 });
 
+io.on("connection",(socket)=>{
+  console.log(socket)
+  socket.on("identity",(data)=>{
+    console.log(data);
+  })
+})
+
 server.listen(port,()=>{
     console.log("server started");
     connectDb()
