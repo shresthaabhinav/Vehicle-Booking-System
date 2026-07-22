@@ -7,7 +7,7 @@ const mongodbUrl = process.env.MONGODB_URL
 import http from "http"
 import { Server } from "socket.io"
 import mongoose from "mongoose"
-import User from "./models/user.model"
+import User from "./models/user.model.js"
 
 const connectDb = async (params) => {
     try {
@@ -18,21 +18,14 @@ const connectDb = async (params) => {
     }
 }
 
-const app = express()
 
-const server = http.createServer(app)
-
-const io = new Server(server, {
-  cors: {
-    origin: process.env.NEXT_BASE_URL,
-  },
-});
 
 io.on("connection",(socket)=>{
 
   socket.on("identity", async (userId)=>{
-    await User.findByIdAndUpdate({
-      
+    await User.findByIdAndUpdate(userId,{
+      socketId: socket.id,
+      isOnline: true
     })
   })
 })
