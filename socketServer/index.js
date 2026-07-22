@@ -6,6 +6,7 @@ const port = process.env.PORT || 5000
 const mongodbUrl = process.env.MONGODB_URL
 import http from "http"
 import { Server } from "socket.io"
+import mongoose from "mongoose"
 
 const connectDb = async (params) => {
     try {
@@ -27,7 +28,7 @@ const io = new Server(server, {
 });
 
 io.on("connection",(socket)=>{
-  console.log(socket)
+  console.log(socket.id)
   socket.on("identity",(data)=>{
     console.log(data);
   })
