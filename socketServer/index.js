@@ -31,10 +31,19 @@ const io = new Server(server, {
 io.on("connection",(socket)=>{
 
   socket.on("identity", async (userId)=>{
+    socket.userId = userId
     await User.findByIdAndUpdate(userId,{
       socketId: socket.id,
       isOnline: true
     })
+  })
+
+  socket.on("disconnect", async ()=>{
+    if (!socket.userId) return
+      await User.findByIdAndUpdate(socket.userId, {
+        socketId: null,
+        isOnline: false,
+      });
   })
 })
 
