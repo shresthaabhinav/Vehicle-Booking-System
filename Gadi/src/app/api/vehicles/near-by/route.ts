@@ -40,10 +40,21 @@ export async function POST(req:NextRequest){
     }
 
     const vehicles = await Vehicle.find({
-      owner: {$in: partnerIds}
-    })
+      owner: {$in: partnerIds},
+      type: vehicleType,
+      status: "approved",
+      isActive: true
+    }).lean()
+
+    return NextResponse.json(
+      vehicles,
+      { status: 200 },
+    );
 
   } catch (error) {
-    
+    return NextResponse.json(
+      { message: `near by vehicles error ${error}` },
+      { status: 500 },
+    );
   }
 }

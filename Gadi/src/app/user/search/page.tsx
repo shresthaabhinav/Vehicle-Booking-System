@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { ArrowLeft, MapPin, Navigation } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import SearchMap from "@/components/SearchMap";
+import axios from "axios";
 
 export default function page() {
   const router = useRouter();
@@ -17,6 +18,17 @@ export default function page() {
   const dropLat = Number(params.get("droplat"));
   const dropLon = Number(params.get("droplon"));
   const vehicle = params.get("vehicle");
+
+  const getNearByVehicles = async ({latitude: number, longitude: number, vehicleType: string})=>{
+    try{
+      const data = await axios.post("/api/vehicles/near-by",{
+        latitude, longitude, vehicleType
+      })
+      console.log(data)
+    } catch (error){
+      console.log(error)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-zinc-100 text-zinc-900 overflow-x-hidden">
