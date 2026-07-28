@@ -1,11 +1,19 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { motion } from "motion/react";
-import { ArrowLeft, MapPin, Navigation } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { ArrowLeft, MapPin, Navigation, Bike, Car, Truck } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import SearchMap from "@/components/SearchMap";
 import axios from "axios";
 import { IVehicle } from "@/models/vehicle.model";
+
+const VEHICLE_META: any = {
+  bike:    {label: "Bike",   Icon: Bike },
+  auto:    {label: "Auto",   Icon: Car },
+  car:     {label: "Car",   Icon: Car },
+  loading: {label: "Loading",   Icon: Truck },
+  truck:   {label: "Truck",   Icon: Truck }
+}
 
 export default function page() {
   const router = useRouter();
@@ -18,9 +26,10 @@ export default function page() {
   const pickUpLon = Number(params.get("pickuplon"));
   const dropLat = Number(params.get("droplat"));
   const dropLon = Number(params.get("droplon"));
-  const vehicle = params.get("vehicle");
+  const vehicle = params.get("vehicle") || "";
   const [ vehicles, setVehicles ] = useState<IVehicle[]>([]);
   const [ loading, setLoading ] = useState(false);
+  const meta = VEHICLE_META[vehicle];
 
   const getNearByVehicles = async ({latitude: number, longitude: number, vehicleType: string})=>{
     setLoading(true)
@@ -135,7 +144,27 @@ export default function page() {
                 "No Nearby Vehicles"
                 }
               </h2>
+              {
+                meta && <div className="text-zinc-400 text-xs mt-0.5">
+                  {meta.label} rides near your pickup
+                </div>
+              }
             </div>
+
+            <AnimatePresence mode='wait'>
+              {loading ? (
+                <motion.div
+                  key="searching"
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.85 }}
+                  className="flex items-center gap-2 bg-zinc-100 border border-zinc-200 px-3 py-4 rounded-full"
+                >
+                  Searching...
+                </motion.div>
+              )}
+            </AnimatePresence>
+
           </motion.div>
         </div>
 
