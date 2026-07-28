@@ -1,10 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, MapPin, Navigation } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import SearchMap from "@/components/SearchMap";
 import axios from "axios";
+import { IVehicle } from "@/models/vehicle.model";
 
 export default function page() {
   const router = useRouter();
@@ -18,17 +19,26 @@ export default function page() {
   const dropLat = Number(params.get("droplat"));
   const dropLon = Number(params.get("droplon"));
   const vehicle = params.get("vehicle");
+  const [ vehicles, setVehicles ] = useState<IVehicle[]>([]);
+  const [ loading, setLoading ] = useState(false);
 
   const getNearByVehicles = async ({latitude: number, longitude: number, vehicleType: string})=>{
+    setLoading(true)
     try{
       const data = await axios.post("/api/vehicles/near-by",{
         latitude, longitude, vehicleType
       })
-      console.log(data)
+      setVehicles(data)
+      setLoading(false)
     } catch (error){
       console.log(error)
+      setLoading(false)
     }
   }
+
+  useEffect(()=>{
+    getNearByVehicles(pickUpLat, pickUpLon, vehicle)
+  },[pickUpLat, pickUpLon])
 
   return (
     <div className="min-h-screen bg-zinc-100 text-zinc-900 overflow-x-hidden">
@@ -105,7 +115,31 @@ export default function page() {
               />
             </div>
           </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="flex items-center justify-between mb-4"
+          >
+            <div>
+              <h2 className="text-zinc-900 txt-lg font-black tracking-tight">
+                {loading
+                ?
+                "Finding Vehicles"
+                :
+                vehicles.length>0
+                ?
+                "Available"
+                :
+                "No Nearby Vehicles"
+                }
+              </h2>
+            </div>
+          </motion.div>
         </div>
+
+        
       </motion.div>
     </div>
   );
