@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, MapPin, Navigation, Bike, Car, Truck, Zap } from "lucide-react";
+import { ArrowLeft, MapPin, Navigation, Bike, Car, Truck, Zap, Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import SearchMap from "@/components/SearchMap";
 import axios from "axios";
@@ -134,24 +134,19 @@ export default function page() {
             <div>
               <h2 className="text-zinc-900 txt-lg font-black tracking-tight">
                 {loading
-                ?
-                "Finding Vehicles"
-                :
-                vehicles.length>0
-                ?
-                "Available"
-                :
-                "No Nearby Vehicles"
-                }
+                  ? "Finding Vehicles"
+                  : vehicles.length > 0
+                    ? "Available"
+                    : "No Nearby Vehicles"}
               </h2>
-              {
-                meta && <div className="text-zinc-400 text-xs mt-0.5">
+              {meta && (
+                <div className="text-zinc-400 text-xs mt-0.5">
                   {meta.label} rides near your pickup
                 </div>
-              }
+              )}
             </div>
 
-            <AnimatePresence mode='wait'>
+            <AnimatePresence mode="wait">
               {loading ? (
                 <motion.div
                   key="searching"
@@ -160,30 +155,46 @@ export default function page() {
                   exit={{ opacity: 0, scale: 0.85 }}
                   className="flex items-center gap-2 bg-zinc-100 border border-zinc-200 px-3 py-1.5 rounded-full"
                 >
-                  <div className="w-3.5 h-3.5 rounded-full border-2 border-zinc-300 border-t-zinc-700 animate-spin"/>
+                  <div className="w-3.5 h-3.5 rounded-full border-2 border-zinc-300 border-t-zinc-700 animate-spin" />
                   <span className="text-zinc-500 text-xs font-semibold">
-                  Searching...
+                    Searching...
                   </span>
                 </motion.div>
-              ):
-              vehicles.length>0?(
+              ) : vehicles.length > 0 ? (
                 <motion.div
                   key="live"
                   initial={{ opacity: 0 }}
                   animate={{}}
                   className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full"
                 >
-                  <Zap size={11} className="text-emerald-600 fill-emerald-600"/>
-                  <span className="text-emerald-700 text-xs font-bold">Live</span>
+                  <Zap
+                    size={11}
+                    className="text-emerald-600 fill-emerald-600"
+                  />
+                  <span className="text-emerald-700 text-xs font-bold">
+                    Live
+                  </span>
                 </motion.div>
-              ):null
-            }
+              ) : null}
             </AnimatePresence>
 
+            <AnimatePresence>
+              {!loading && vehicles.length == 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center justify-center py-14 text-center"
+                >
+                  <div className="w-20 h-20 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center mb-4">
+                    <Search size={26} className="text-zinc-400"/>
+                  </div>
+                  <p className="text-zinc-900 font-bold text-base mb-1">Vehicles Not Found</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
-
-        
       </motion.div>
     </div>
   );
