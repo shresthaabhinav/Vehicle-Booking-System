@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, MapPin, Navigation, Bike, Car, Truck, Zap, Search } from "lucide-react";
+import { ArrowLeft, MapPin, Navigation, Bike, Car, Truck, Zap, Search, RefreshCcw } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import SearchMap from "@/components/SearchMap";
 import axios from "axios";
@@ -177,23 +177,38 @@ export default function page() {
                 </motion.div>
               ) : null}
             </AnimatePresence>
-
-            <AnimatePresence>
-              {!loading && vehicles.length == 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col items-center justify-center py-14 text-center"
-                >
-                  <div className="w-20 h-20 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center mb-4">
-                    <Search size={26} className="text-zinc-400"/>
-                  </div>
-                  <p className="text-zinc-900 font-bold text-base mb-1">Vehicles Not Found</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </motion.div>
+
+          <AnimatePresence>
+            {!loading && vehicles.length == 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col items-center justify-center py-14 text-center"
+              >
+                <div className="w-20 h-20 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center mb-4">
+                  <Search size={26} className="text-zinc-400" />
+                </div>
+                <p className="text-zinc-900 font-bold text-base mb-1">
+                  Vehicles Not Found
+                </p>
+                <p className="text-zinc-400 text-sm max-w-xs leading-relaxed">
+                  {meta.label || "Vehicle"} drivers are available near your
+                  pickup right now.
+                </p>
+
+                <motion.button 
+                  whileTap={{ scale: 0.95 }}
+                  onClick={()=>getNearByVehicles(pickUpLat, pickUpLon, vehicle)}
+                  className="mt-5 flex items-center gap-2 bg-zinc-900 text-white text-sm font-semibold px-6 py-2.5 rounded-xl hover:bg-zinc-800 transition-colors"
+                  >
+                  <RefreshCcw size={14}/> Retry Search
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
         </div>
       </motion.div>
     </div>
