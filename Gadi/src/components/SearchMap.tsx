@@ -4,6 +4,7 @@ import { MapPin, Navigation2 } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import React, { useEffect, useState } from 'react'
 import { MapContainer, Marker, Polyline, TileLayer, useMap } from 'react-leaflet'
+import L from "leaflet";
 
 type props={
   pickUp: string,

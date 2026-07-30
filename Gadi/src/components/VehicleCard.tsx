@@ -14,7 +14,13 @@ export default function VehicleCard({vehicle, distance}:{vehicle:IVehicle,distan
         style={{ boxShadow: "0 2px 16px rgba(0, 0, 0, 0.06)"}}
         >
       <div className='relative h-48 bg-zinc-50 flex items-center justify-center overflow-hidden'>
-        
+        <div 
+            className='absolute inset-0 opacity-[0.04]'
+            style={{
+                backgroundImage: "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)",
+                backgroundSize: "24px 24px"
+            }}
+        />
       </div>
     </motion.div>
   )

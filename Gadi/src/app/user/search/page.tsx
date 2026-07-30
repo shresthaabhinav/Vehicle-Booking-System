@@ -3,11 +3,19 @@ import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeft, MapPin, Navigation, Bike, Car, Truck, Zap, Search, RefreshCcw } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import SearchMap from "@/components/SearchMap";
 import axios from "axios";
 import { IVehicle } from "@/models/vehicle.model";
 import VehicleCard from "@/components/VehicleCard";
+import dynamic from "next/dynamic";
 
+const SearchMap = dynamic(() => import("@/components/SearchMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-zinc-100">
+      <span className="text-zinc-400 text-xs">Loading map...</span>
+    </div>
+  ),
+});
 const VEHICLE_META: any = {
   bike:    {label: "Bike",   Icon: Bike },
   auto:    {label: "Auto",   Icon: Car },
@@ -32,10 +40,10 @@ export default function page() {
   const [ loading, setLoading ] = useState(false);
   const meta = VEHICLE_META[vehicle];
 
-  const getNearByVehicles = async ({latitude: number, longitude: number, vehicleType: string})=>{
+  const getNearByVehicles = async (latitude: number, longitude: number, vehicleType: string | null) => {
     setLoading(true)
     try{
-      const data = await axios.post("/api/vehicles/near-by",{
+      const { data } = await axios.post("/api/vehicles/near-by", {
         latitude, longitude, vehicleType
       })
       setVehicles(data)
