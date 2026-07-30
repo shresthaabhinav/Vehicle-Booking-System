@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import SearchMap from "@/components/SearchMap";
 import axios from "axios";
 import { IVehicle } from "@/models/vehicle.model";
+import VehicleCard from "@/components/VehicleCard";
 
 const VEHICLE_META: any = {
   bike:    {label: "Bike",   Icon: Bike },
@@ -208,6 +209,22 @@ export default function page() {
               </motion.div>
             )}
           </AnimatePresence>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {vehicles.map((v,i)=>(
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y:0 }}
+                transition={{ delay: i*0.06, duration: 0.38, ease: [0.22, 1, 0.36, 1]}}
+                >
+                  <VehicleCard
+                    vehicle={v}
+                    distance={km}
+                    />
+              </motion.div>
+            ))}
+          </div>
 
         </div>
       </motion.div>
