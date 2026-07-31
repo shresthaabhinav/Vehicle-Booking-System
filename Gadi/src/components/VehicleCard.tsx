@@ -16,6 +16,12 @@ const TYPE_CONFIG = {
 export default function VehicleCard({vehicle, distance}:{vehicle:IVehicle,distance:number | undefined}) {
 
   const {Icon, label} = TYPE_CONFIG[vehicle.type]
+  let estimated:number=0;
+
+  if(vehicle.baseFare && vehicle.pricePerKM && distance){
+  estimated = Math.round(vehicle.baseFare + vehicle.pricePerKM*distance)
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -98,6 +104,22 @@ export default function VehicleCard({vehicle, distance}:{vehicle:IVehicle,distan
               <TbCurrencyRupeeNepalese size={11}/>{vehicle.waitingCharge}
               <span>/min</span>
             </div>
+          </div>
+        </div>
+
+        <div className='flex items-end justify-between pt-3 border-t border-zinc-100'>
+          <div>
+            <p className='text-zinc-400 text-[9px] uppercase tracking-widest font-bold mb-0.5'>Est. Fare</p>
+            <motion.div
+              key={estimated}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25 }}
+              className='flex items-baseline gap-0.5'
+            >
+              <TbCurrencyRupeeNepalese size={16} className='text-zinc-900 mb-0.5' strokeWidth={2.5}/>
+              <span>{estimated}</span>
+            </motion.div>
           </div>
         </div>
       </div>
