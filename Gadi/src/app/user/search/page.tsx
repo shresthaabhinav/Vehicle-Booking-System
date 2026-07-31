@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeft, MapPin, Navigation, Bike, Car, Truck, Zap, Search, RefreshCcw } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
-import { IVehicle } from "@/models/vehicle.model";
+import Vehicle, { vehicleType } from "@/models/vehicle.model";
 import VehicleCard from "@/components/VehicleCard";
 import dynamic from "next/dynamic";
 
@@ -24,12 +24,28 @@ const VEHICLE_META: any = {
   truck:   {label: "Truck",   Icon: Truck }
 }
 
+interface IVehicle{
+    owner: string,
+    type: vehicleType,
+    vehicleModel: string,
+    number: string,
+    imageUrl?: string,
+    baseFare?: number,
+    pricePerKM?: number,
+    waitingCharge?: number,
+    status: "approved" | "pending" | "rejected",
+    rejectionReason?: string,
+    isActive: boolean,
+    createdAt: Date,
+    updatedAt: Date
+}
+
 export default function page() {
   const router = useRouter();
   const params = useSearchParams();
   const [pickUp, setPickUp] = useState(params.get("pickup") || "");
   const [drop, setDrop] = useState(params.get("drop") || "");
-  const [km, setKm] = useState<number>();
+  const [km, setKm] = useState<number>(0);
   const mobile = params.get("mobile");
   const pickUpLat = Number(params.get("pickuplat"));
   const pickUpLon = Number(params.get("pickuplon"));
@@ -229,6 +245,23 @@ export default function page() {
                   <VehicleCard
                     vehicle={v}
                     distance={km}
+                    onBook={
+                      ()=>{
+                        const url = new URLSearchParams({
+                          pickUp,
+                          drop,
+                          vehicle:v.type,
+                          driverId:v.owner,
+                          fare: String(v.baseFare! + (v.pricePerKM!*km)),
+                          pickUpLat: String(pickUpLat),
+                          pickUpLon: String(pickUpLon),
+                          dropLat: String(dropLat),
+                          dropLon: String(dropLon),
+                          mobile: String(mobile)
+                        })
+                        router.push('/checkout')
+                      }
+                    }
                     />
               </motion.div>
             ))}
