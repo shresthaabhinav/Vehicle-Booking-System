@@ -2,7 +2,7 @@
 import { IVehicle } from '@/models/vehicle.model'
 import React from 'react'
 import {motion} from 'motion/react'
-import { Bike, Car, Truck } from 'lucide-react';
+import { Bike, Car, Star, Truck } from 'lucide-react';
 
 const TYPE_CONFIG = {
   bike:    { label: "Bike",    Icon: Bike },
@@ -13,6 +13,8 @@ const TYPE_CONFIG = {
 };
 
 export default function VehicleCard({vehicle, distance}:{vehicle:IVehicle,distance:number | undefined}) {
+
+  const {Icon, label} = TYPE_CONFIG[vehicle.type]
   return (
     <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -39,6 +41,30 @@ export default function VehicleCard({vehicle, distance}:{vehicle:IVehicle,distan
           whileHover={{ scale: 1.06, filter: "drop-shadow(0 12px 32px rgba(0,0,0,0.22))"}}
           transition={{ duration: 0.35 }}
           />
+          <div className='absolute bottom-3 right-3 z-20 flex items-center gap-1.5 bg-zinc-900 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-full'>
+            <Icon size={10}/>
+            {label}
+          </div>
+          <div className='absolute bottom-3 left-3 z-20 flex items-center gap-1 bg-white border border-zinc-200 text-zinc-700 text-[10px] font-bold px-2.5 py-1.5 rounded-full shadow-sm'>
+            <Star size={9} className='fill-zinc-900 text-zinc-900'/>
+            4.8
+          </div>
+      </div>
+
+      <div className='h-px bg-zinc-100'/>
+
+      <div className='flex flex-col flex-1 p-5 gap-4'>
+        <div className='flex items-start justify-between gap-3'>
+          <div>
+            <h3>{vehicle.vehicleModel}</h3>
+            <div>
+              
+            </div>
+          </div>
+          <div>
+            <Icon/>
+          </div>
+        </div>
       </div>
     </motion.div>
   )
