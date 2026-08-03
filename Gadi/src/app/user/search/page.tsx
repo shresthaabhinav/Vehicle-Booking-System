@@ -259,7 +259,7 @@ export default function page() {
                           dropLon: String(dropLon),
                           mobile: String(mobile)
                         })
-                        router.push('/checkout')
+                        router.push(`/user/checkout?${url.toString()}`)
                       }
                     }
                     />

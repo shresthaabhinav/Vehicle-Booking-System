@@ -1,5 +1,5 @@
 'use client'
-import { IVehicle } from '@/models/vehicle.model'
+import { IVehicle, vehicleType } from '@/models/vehicle.model'
 import React from 'react'
 import {motion} from 'motion/react'
 import { ArrowRight, Bike, Car, Clock, Gauge, Star, Truck } from 'lucide-react';
@@ -13,7 +13,23 @@ const TYPE_CONFIG = {
   truck:   { label: "Truck",   Icon: Truck }
 };
 
-export default function VehicleCard({vehicle, distance}:{vehicle:IVehicle,distance:number | undefined}) {
+interface IVehicle{
+    owner: string,
+    type: vehicleType,
+    vehicleModel: string,
+    number: string,
+    imageUrl?: string,
+    baseFare?: number,
+    pricePerKM?: number,
+    waitingCharge?: number,
+    status: "approved" | "pending" | "rejected",
+    rejectionReason?: string,
+    isActive: boolean,
+    createdAt: Date,
+    updatedAt: Date
+}
+
+export default function VehicleCard({vehicle, distance, onBook}:{vehicle:IVehicle, distance:number | undefined, onBook:()=>void}) {
 
   const {Icon, label} = TYPE_CONFIG[vehicle.type]
   let estimated:number=0;
@@ -136,6 +152,7 @@ export default function VehicleCard({vehicle, distance}:{vehicle:IVehicle,distan
           <motion.button
             whileTap={{ scale: 0.92 }}
             whileHover={{ scale: 1.04 }}
+            onClick={onBook}
             className="flex items-center gap-2 bg-zinc-900 hover:bg-black text-white text-sm font-black px-6 py-3.5 rounded-2xl transition-colors shadow-md"
           >
             Book
