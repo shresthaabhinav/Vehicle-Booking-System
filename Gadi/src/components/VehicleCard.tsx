@@ -61,7 +61,7 @@ export default function VehicleCard({vehicle, distance, onBook}:{vehicle:IVehicl
           src={vehicle.imageUrl}
           alt={vehicle.vehicleModel}
           className="relative z-10 h-32 w-full object-contain"
-          style={{ filter: "drop-shadow(0 8px 24px rbga(0,0,0,0.14))" }}
+          style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.14))" }}
           whileHover={{
             scale: 1.06,
             filter: "drop-shadow(0 12px 32px rgba(0,0,0,0.22))",

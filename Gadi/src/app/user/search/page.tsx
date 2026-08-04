@@ -47,10 +47,10 @@ export default function page() {
   const [drop, setDrop] = useState(params.get("drop") || "");
   const [km, setKm] = useState<number>(0);
   const mobile = params.get("mobile");
-  const pickUpLat = Number(params.get("pickuplat"));
-  const pickUpLon = Number(params.get("pickuplon"));
-  const dropLat = Number(params.get("droplat"));
-  const dropLon = Number(params.get("droplon"));
+  const pickUpLat = Number(params.get("pickUpLat"));
+  const pickUpLon = Number(params.get("pickUpLon"));
+  const dropLat = Number(params.get("dropLat"));
+  const dropLon = Number(params.get("dropLon"));
   const vehicle = params.get("vehicle") || "";
   const [ vehicles, setVehicles ] = useState<IVehicle[]>([]);
   const [ loading, setLoading ] = useState(false);

@@ -16,13 +16,13 @@ export default function page() {
 
   const router = useRouter();
   const params = useSearchParams();
-  const [pickUp, setPickUp] = useState(params.get("pickup") || "");
+  const [pickUp, setPickUp] = useState(params.get("pickUp") || "");
   const [drop, setDrop] = useState(params.get("drop") || "");
   const mobile = params.get("mobile");
-  const pickUpLat = Number(params.get("pickuplat"));
-  const pickUpLon = Number(params.get("pickuplon"));
-  const dropLat = Number(params.get("droplat"));
-  const dropLon = Number(params.get("droplon"));
+  const pickUpLat = Number(params.get("pickUpLat"));
+  const pickUpLon = Number(params.get("pickUpLon"));
+  const dropLat = Number(params.get("dropLat"));
+  const dropLon = Number(params.get("dropLon"));
   const vehicle = params.get("vehicle") || "";
   const fare = params.get("fare") || "";
   const { Icon, label } = VEHICLE_META[vehicle]
@@ -68,10 +68,11 @@ export default function page() {
                         <div className='w-3 h-3 rounded-full bg-zinc-900 border-2 border-white ring ring-zinc-300'/>
                         <div className='w-px flex-1 bg-zinc-300 my-1' style={{ minHeight: 12 }}/>
                       </div>
-                      <div>
-                        <div>Pickup</div>
+                      <div className='flex-1 min-w-0'>
+                        <div className='text-[9px] font-black uppercase tracking-[0.18em] text-zinc-400 mb-0.5'>Pickup</div>
+                        <div className='text-sm font-semibold text-zinc-900 leading-snug truncate'>{pickUp}</div>
                       </div>
-                      <MapPin/>
+                      <MapPin size={14} className='text-zinc-400 flex-shrink-0 mt-1'/>
                     </div>
                   </div>
                 </div>
