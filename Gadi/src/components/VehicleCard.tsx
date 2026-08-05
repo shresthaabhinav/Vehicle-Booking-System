@@ -44,7 +44,7 @@ export default function VehicleCard({vehicle, distance, onBook}:{vehicle:IVehicl
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -6 }}
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-      className="relative bg-white border border-zinc-200 rounded-3xl overflow-hidden flex flex-group cursor-default"
+      className="relative bg-white border border-zinc-200 rounded-3xl overflow-hidden flex flex-col group cursor-default"
       style={{ boxShadow: "0 2px 16px rgba(0, 0, 0, 0.06)" }}
     >
       <div className="relative h-48 bg-zinc-50 flex items-center justify-center overflow-hidden">

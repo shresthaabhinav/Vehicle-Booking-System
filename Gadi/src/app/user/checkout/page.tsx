@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import {motion} from 'motion/react'
-import { Bike, Car, MapPin, Truck } from 'lucide-react';
+import { Bike, Car, MapPin, Navigation, Truck } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const VEHICLE_META: any = {
@@ -74,6 +74,18 @@ export default function page() {
                       </div>
                       <MapPin size={14} className='text-zinc-400 flex-shrink-0 mt-1'/>
                     </div>
+                    <div className='flex gap-4 px-5 py-4 border-b border-zinc-100'>
+                      <div className='flex flex-col items-center flex-shrink-0 pt-0.5'>
+                        <div className='w-3 h-3 rounded-full bg-zinc-900 border-2 border-white ring ring-zinc-300'/>
+                        
+                      </div>
+                      <div className='flex-1 min-w-0'>
+                        <div className='text-[9px] font-black uppercase tracking-[0.18em] text-zinc-400 mb-0.5'>Drop</div>
+                        <div className='text-sm font-semibold text-zinc-900 leading-snug truncate'>{drop}</div>
+                      </div>
+                      <Navigation size={14} className='text-zinc-400 flex-shrink-0 mt-1'/>
+                    </div>
+                    
                   </div>
                 </div>
             </motion.div>
