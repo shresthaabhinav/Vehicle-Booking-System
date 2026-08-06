@@ -27,7 +27,7 @@ export default function page() {
   const dropLat = Number(params.get("dropLat"));
   const dropLon = Number(params.get("dropLon"));
   const vehicle = params.get("vehicle") || "";
-  const fare = Number(params.get("fare") || "") ;
+  const fare = params.get("fare") || "" ;
   const { Icon, label } = VEHICLE_META[vehicle]
 
   const [status, setStatus] = useState<Status>("idle")
@@ -143,7 +143,7 @@ export default function page() {
                     <TbCurrencyRupeeNepalese />
                   </span>
                   <span className="text-zinc-900 text-5xl font-black tracking-tight leading-none">
-                    {fare.toFixed(2)}
+                    {fare}
                   </span>
                 </motion.div>
               </div>
