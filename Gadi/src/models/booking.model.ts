@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 type BookingStatus =
+  | "idle"
   | "requested"
   | "awaiting_payment"
   | "confirmed"
@@ -101,6 +102,7 @@ const bookingSchema = new mongoose.Schema<IBooking>(
     bookingStatus: {
       type: String,
       enum: [
+        "idle",
         "requested",
         "awaiting_payment",
         "confirmed",
@@ -110,7 +112,7 @@ const bookingSchema = new mongoose.Schema<IBooking>(
         "rejected",
         "expired",
       ],
-      default: "requested",
+      default: "idle",
     },
     paymentStatus: {
       type: String,

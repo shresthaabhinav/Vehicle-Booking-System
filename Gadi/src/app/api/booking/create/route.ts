@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import connectDb from "@/lib/db";
+import Booking from "@/models/booking.model";
 import User from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -41,7 +42,23 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
-  } catch (error) {
+
+    const existing = await Booking.findOne({
+      user: session.user.id,
+      status: {
+        $in: ["requested", "awaiting_payment", "confirmed", "started"],
+      },
+    });
+
+    if(existing){
+      return NextResponse.json(
+        existing
+      );
+    }
+
     
+
+  } catch (error) {
+
   }
 }
