@@ -39,26 +39,56 @@ export default function Nav() {
           <Image src={"/logo.png"} alt="logo" width={44} height={44} priority />
 
           <div className="hidden md:flex items-center gap-10">
-            {Nav_Items.map((i, index) => {
-              let href;
-              if (i == "Home") {
-                href = "/";
-              } else {
-                href = `/${i.toLowerCase()}`;
-              }
-
-              const active = href == pathName;
-
-              return (
+            {userData?.role == "partner" ? (
+              <>
                 <Link
-                  key={index}
-                  href={href}
-                  className={`text-sm font-medium transition ${active ? "text-white" : "text-gray-400 hover:text-white"}`}
+                  className="relative text-sm font-medium text-gray-300 hover:text-white transition"
+                  href={"/"}
                 >
-                  {i}
+                  Home
                 </Link>
-              );
-            })}
+                <Link
+                  className="relative text-sm font-medium text-gray-300 hover:text-white transition"
+                  href={"/partner/pending-requests"}
+                >
+                  Pending Requests
+                  <span className="absolute -top-2 -right-5 w-6 h-6 bg-white text-black text-xs rounded-full flex items-center justify-center font-bold">0</span>
+                </Link>
+                <Link
+                  className="relative text-sm font-medium text-gray-300 hover:text-white transition"
+                  href={"/partner/bookings"}
+                >
+                  Bookings
+                </Link>
+                <Link
+                  className="relative text-sm font-medium text-gray-300 hover:text-white transition"
+                  href={"/partner/active-ride"}
+                >
+                  Active Ride
+                </Link>
+              </>
+            ) : (
+              Nav_Items.map((i, index) => {
+                let href;
+                if (i == "Home") {
+                  href = "/";
+                } else {
+                  href = `/${i.toLowerCase()}`;
+                }
+
+                const active = href == pathName;
+
+                return (
+                  <Link
+                    key={index}
+                    href={href}
+                    className={`text-sm font-medium transition ${active ? "text-white" : "text-gray-400 hover:text-white"}`}
+                  >
+                    {i}
+                  </Link>
+                );
+              })
+            )}
           </div>
           <div className="flex items-center gap-3 relative">
             <div className="hidden md:block relative">
@@ -94,7 +124,12 @@ export default function Nav() {
                             {userData.role}
                           </p>
                           {userData.role != "partner" && (
-                            <div className="w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer" onClick={() => router.push("/partner/onboarding/vehicle")}>
+                            <div
+                              className="w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer"
+                              onClick={() =>
+                                router.push("/partner/onboarding/vehicle")
+                              }
+                            >
                               <div className="flex -space-x-2">
                                 <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
                                   <Bike size={14} />
@@ -106,9 +141,7 @@ export default function Nav() {
                                   <Truck size={14} />
                                 </div>
                               </div>
-                              <div>
-                              Become a Partner
-                              </div>
+                              <div>Become a Partner</div>
                               <ChevronRight size={16} className="ml-auto" />
                             </div>
                           )}
@@ -226,7 +259,10 @@ export default function Nav() {
                   {userData.role}
                 </p>
                 {userData.role != "partner" && (
-                  <div className="w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl" onClick={()=>router.push("/partner/onboarding/vehicle")}>
+                  <div
+                    className="w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl"
+                    onClick={() => router.push("/partner/onboarding/vehicle")}
+                  >
                     <div className="flex -space-x-2">
                       <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
                         <Bike size={14} />
@@ -238,9 +274,7 @@ export default function Nav() {
                         <Truck size={14} />
                       </div>
                     </div>
-                    <div>
-                    Become a Partner
-                    </div>
+                    <div>Become a Partner</div>
                     <ChevronRight size={16} className="ml-auto" />
                   </div>
                 )}
