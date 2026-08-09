@@ -25,6 +25,7 @@ const VEHICLE_META: any = {
 }
 
 interface IVehicle{
+    _id: string,
     owner: string,
     type: vehicleType,
     vehicleModel: string,
@@ -250,8 +251,9 @@ export default function page() {
                         const url = new URLSearchParams({
                           pickUp,
                           drop,
-                          vehicle:v.type,
-                          driverId:v.owner,
+                          vehicle: v.type,
+                          driverId: v.owner,
+                          vehicleId: String(v._id),
                           fare: String(Math.round(v.baseFare! + (v.pricePerKM!*km))),
                           pickUpLat: String(pickUpLat),
                           pickUpLon: String(pickUpLon),

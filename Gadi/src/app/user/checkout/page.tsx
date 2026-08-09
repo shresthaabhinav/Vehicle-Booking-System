@@ -4,6 +4,7 @@ import {AnimatePresence, motion} from 'motion/react'
 import { ArrowRight, Bike, Car, Clock, CreditCard, MapPin, Navigation, ShieldCheck, Truck } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { TbCurrencyRupeeNepalese } from 'react-icons/tb';
+import axios from 'axios';
 
 const VEHICLE_META: any = {
   bike: { label: "Bike", Icon: Bike },
@@ -27,10 +28,37 @@ export default function page() {
   const dropLat = Number(params.get("dropLat"));
   const dropLon = Number(params.get("dropLon"));
   const vehicle = params.get("vehicle") || "";
-  const fare = params.get("fare") || "" ;
+  const driverId = params.get("driverId") || "";
+  const vehicleId = params.get("vehicleId") || "";
+  const fare = params.get("fare") || "";
   const { Icon, label } = VEHICLE_META[vehicle]
 
   const [status, setStatus] = useState<Status>("idle")
+
+  const handleRequestBooking = async () =>{
+    try {
+      const {data} = await axios.post("/api/booking/create".{
+        driverId: vehicle?.owner ,
+        vehicleId,
+        pickUpAddress:pickUp,
+        dropAddress:drop,
+        pickUpLocation:{
+          type:"Point",
+          coordinates:[pickUpLon, pickUpLat]
+        },
+        dropLocation:{
+          type:"Point",
+          coordinates:[dropLon, dropLat]
+        },
+        fare,
+        mobileNumber:mobile,
+      })
+
+      console.log(data)
+    } catch (error:any) {
+      console.log(error.response.data.message)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-zinc-100 px-4 py-12">
@@ -209,7 +237,7 @@ export default function page() {
                     <motion.button
                       whileTap={{ scale: 0.97 }}
                       whileHover={{ scale: 1.02 }}
-                      onClick={handleCreateBooking}
+                      onClick={handleRequestBooking}
                       disabled={loading}
                       className="w-full h-14 mt-8 bg-zinc-900 hover:bg-black disabled:opacity-40 text-white font-black text-sm rounded-2xl flex items-center justify-center gap-2.5 transition-colors shadow-md"
                     >

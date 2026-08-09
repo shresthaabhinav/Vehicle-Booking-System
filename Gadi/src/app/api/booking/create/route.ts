@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import connectDb from "@/lib/db";
 import Booking from "@/models/booking.model";
 import User from "@/models/user.model";
+import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -15,9 +16,9 @@ export async function POST(req: NextRequest) {
     const {
       driverId,
       vehicleId,
-      pickupAddress,
+      pickUpAddress,
       dropAddress,
-      pickupLocation,
+      pickUpLocation,
       dropLocation,
       fare,
       mobileNumber,
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
     if (
       !driverId ||
       !vehicleId ||
-      !pickupLocation.coordinates ||
+      !pickUpLocation.coordinates ||
       !dropLocation.coordinates
     ) {
       return NextResponse.json(
@@ -34,6 +35,8 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
+
+    const userId = new mongoose.Schema.Types.ObjectId(session.user.id)
 
     const driver = await User.findById(driverId);
     if (!driver) {
@@ -44,7 +47,7 @@ export async function POST(req: NextRequest) {
     }
 
     const existing = await Booking.findOne({
-      user: session.user.id,
+      user: userId,
       status: {
         $in: ["requested", "awaiting_payment", "confirmed", "started"],
       },
@@ -56,9 +59,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    
+    const booking = await Booking.create({
+        user: session.user.id.toString(),
+        driver,
+        vehicle: vehicleId,
+        pickUpAddress,
+        dropAddress,
+        pickUpLocation,
+        dropLocation,
+        fare,
+        userMobileNumber: mobileNumber,
+        driverMobileNumber: driver.mobileNumber,
+        bookingStatus: "requested",
+    });
+
+      return NextResponse.json(
+        booking, {status: 200}
+      );
 
   } catch (error) {
-
+    return NextResponse.json(
+      {message: `create booking error ${error}`},
+      {status: 500}
+    );
   }
 }
