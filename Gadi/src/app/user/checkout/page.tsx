@@ -37,6 +37,7 @@ export default function page() {
 
   const handleRequestBooking = async () =>{
     try {
+      console.log(dropLat);
       const {data} = await axios.post("/api/booking/create".{
         driverId: vehicle?.owner ,
         vehicleId,

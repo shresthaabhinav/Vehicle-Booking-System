@@ -48,10 +48,12 @@ export async function POST(req: NextRequest) {
 
     const existing = await Booking.findOne({
       user: user._id,
-      status: {
+      bookingStatus: {
         $in: ["requested", "awaiting_payment", "confirmed", "started"],
       },
     });
+
+    console.log(existing)
 
     if(existing){
       return NextResponse.json(
