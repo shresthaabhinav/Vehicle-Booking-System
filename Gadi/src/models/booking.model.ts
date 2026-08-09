@@ -57,12 +57,12 @@ const bookingSchema = new mongoose.Schema<IBooking>(
     },
     driver: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Driver",
+      ref: "User",
       required: true,
     },
     vehicle: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Vehicle",
+      ref: "User",
       required: true,
     },
     pickUpAddress: {

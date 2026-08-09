@@ -80,7 +80,17 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
 
   const geoCoding = async (q: string):Promise<[number, number] | null> =>{
     try {
-      const {data} = await axios.get(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=1`)
+      const { data } = await axios.get(
+        "https://api.geoapify.com/v1/geocode/autocomplete",
+        {
+          params: {
+            text: q.trim(),
+            apiKey: process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY,
+            filter: "countrycode:np",
+            limit: 1
+          },
+        },
+      );
       if(!data.features.length) return null
       const [lon, lat] = data.features[0].geometry.coordinates
       return [lat, lon]
@@ -92,7 +102,17 @@ export default function SearchMap({pickUp, drop, onChange, onDistance}:props) {
 
   const reverseGeoCoding = async (lat:number, lon:number)=>{
     
-      const {data} = await axios.get(`https://photon.komoot.io/reverse?lon=${lon}&lat=${lat}`)
+      const { data } = await axios.get(
+        "https://api.geoapify.com/v1/geocode/reverse",
+        {
+          params: {
+            lat,
+            lon,
+            apiKey: process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY,
+            filter: "countrycode:np",
+          },
+        },
+      );
 
       if(!data.features.length)
         return;

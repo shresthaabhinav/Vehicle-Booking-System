@@ -37,11 +37,11 @@ export default function page() {
   const [pickUp, setPickUp] = useState("");
   const [drop, setDrop] = useState("");
   const [pickUpCountry, setPickUpCountry] = useState("");
-  const [pickUpLat, setPickUpLat] = useState<Number>();
-  const [pickUpLon, setPickUpLon] = useState<Number>();
+  const [pickUpLat, setPickUpLat] = useState<number>();
+  const [pickUpLon, setPickUpLon] = useState<number>();
   const [dropCountry, setDropCountry] = useState("");
-  const [dropLat, setDropLat] = useState<Number>();
-  const [dropLon, setDropLon] = useState<Number>();
+  const [dropLat, setDropLat] = useState<number>();
+  const [dropLon, setDropLon] = useState<number>();
   const [locating, setLocating] = useState(false)
   const [pickUpSuggestions, setPickUpSuggestions] = useState<Place[]>([])
   const [dropSuggestions, setDropSuggestions] = useState<Place[]>([]);
@@ -59,7 +59,15 @@ export default function page() {
         setResults([])
         return;
       }
-      const {data} = await axios.get(`https://photon.komoot.io/api/?q=${encodeURIComponent(q.trim())}&limit=8&lang=en`)
+      const {data} = await axios.get("https://api.geoapify.com/v1/geocode/autocomplete",{
+        params: {
+          text: q.trim(),
+          apiKey: process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY,
+          filter: "countrycode:np",
+          limit: 5,
+          format: "json"
+        }
+      })
       let results: Place[] = (data.features ?? []).map((f: any) => ({
         id: String(f.properties.osm_id),
         name: f.properties.name,
@@ -87,7 +95,16 @@ export default function page() {
     setLocating(true)
     navigator.geolocation.getCurrentPosition(async ({coords})=>{
       try {
-        const {data} = await axios.get(`https://photon.komoot.io/reverse?lon=${coords.longitude}&lat=${coords.latitude}`)
+        const { data } = await axios.get(
+          "https://api.geoapify.com/v1/geocode/reverse",{
+            params:{
+              lat: coords.latitude,
+              lon: coords.longitude,
+              apiKey: process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY,
+              filter: "countrycode:np"
+              }
+          }
+        );
 
         if(data.features.length){
           const p = data.features[0].properties

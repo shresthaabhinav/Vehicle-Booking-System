@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const userId = new mongoose.Schema.Types.ObjectId(session.user.id)
+    const user = await User.findOne({email:session.user.email})
 
     const driver = await User.findById(driverId);
     if (!driver) {
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     }
 
     const existing = await Booking.findOne({
-      user: userId,
+      user: user._id,
       status: {
         $in: ["requested", "awaiting_payment", "confirmed", "started"],
       },
@@ -60,17 +60,17 @@ export async function POST(req: NextRequest) {
     }
 
     const booking = await Booking.create({
-        user: session.user.id.toString(),
-        driver,
-        vehicle: vehicleId,
-        pickUpAddress,
-        dropAddress,
-        pickUpLocation,
-        dropLocation,
-        fare,
-        userMobileNumber: mobileNumber,
-        driverMobileNumber: driver.mobileNumber,
-        bookingStatus: "requested",
+      user: user._id,
+      driver,
+      vehicle: vehicleId,
+      pickUpAddress,
+      dropAddress,
+      pickUpLocation,
+      dropLocation,
+      fare,
+      userMobileNumber: mobileNumber,
+      driverMobileNumber: driver.mobileNumber,
+      bookingStatus: "requested",
     });
 
       return NextResponse.json(
