@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,6 +10,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { Bike, Car, ChevronRight, LogOut, Menu, Truck, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { setUserData } from "@/redux/userSlice";
+import axios from "axios";
 
 const Nav_Items = ["Home", "Bookings", "About Us", "Contact"];
 
@@ -27,6 +28,21 @@ export default function Nav() {
     dispatch(setUserData(null));
     setProfileOpen(false);
   };
+
+  const fetchCount = async () =>{
+    try {
+      const {data} = await axios.get("/api/partner/bookings/pending-request-count")
+      console.log(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(()=>{
+    if(userData?.role=="partner"){
+      fetchCount()
+    }
+  },[userData?.role])
 
   return (
     <>
