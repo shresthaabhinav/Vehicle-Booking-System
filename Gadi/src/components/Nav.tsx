@@ -20,6 +20,7 @@ export default function Nav() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { userData } = useSelector((state: RootState) => state.user);
+  const [pendingCount, setPendingCount] = useState();
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -31,8 +32,11 @@ export default function Nav() {
 
   const fetchCount = async () =>{
     try {
-      const {data} = await axios.get("/api/partner/bookings/pending-request-count")
+      const { data } = await axios.get(
+        "/api/partner/bookings/pending-requests-count",
+      );
       console.log(data)
+      setPendingCount(data)
     } catch (error) {
       console.log(error)
     }
@@ -68,7 +72,7 @@ export default function Nav() {
                   href={"/partner/pending-requests"}
                 >
                   Pending Requests
-                  <span className="absolute -top-2 -right-5 w-6 h-6 bg-white text-black text-xs rounded-full flex items-center justify-center font-bold">0</span>
+                  <span className="absolute -top-2 -right-5 w-6 h-6 bg-white text-black text-xs rounded-full flex items-center justify-center font-bold">{pendingCount ?? 0}</span>
                 </Link>
                 <Link
                   className="relative text-sm font-medium text-gray-300 hover:text-white transition"
