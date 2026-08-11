@@ -36,7 +36,7 @@ export interface IBooking {
 
   bookingStatus: BookingStatus;
   paymentStatus: PaymentStatus;
-
+  paymentDeadline: Date;
   adminCommission: number;
   partnerAmount: number;
 
@@ -118,6 +118,9 @@ const bookingSchema = new mongoose.Schema<IBooking>(
       type: String,
       enum: ["pending", "paid", "cash", "failed"],
       default: "pending",
+    },
+    paymentDeadline: {
+      type: Date,
     },
     adminCommission: {
       type: Number,
