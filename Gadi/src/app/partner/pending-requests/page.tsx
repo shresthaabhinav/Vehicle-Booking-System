@@ -88,28 +88,39 @@ export default function page() {
                       </div>
                     </div>
 
-                    <div className='flex items-center gap-2 text-sm text-gray-500 mt-2'>
-                      <Clock size={14} className='opacity-70'/>
-                      <span className='font-medium'>
-                        {new Date(b?.createdAt!).toLocaleString("en-NP",{
-                          day:"2-digit",
-                          month:"short",
-                          year:"numeric",
-                          hour:"2-digit",
-                          minute:"2-digit"
+                    <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
+                      <Clock size={14} className="opacity-70" />
+                      <span className="font-medium">
+                        {new Date(b?.createdAt!).toLocaleString("en-NP", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
                         })}
                       </span>
                     </div>
                   </div>
 
-                  <div className='flex flex-col justify-between lg:items-end gap-6 w-full lg:w-auto'>
-                      <div className='text-left lg:text-right'>
-                        <p className='text-xs tracking-wide text-gray-400 uppercase mb-1'>Estimated Fare</p>
-                        <div className='flex items-center gap-2 text-3xl font-bold text-gray-900 lg:justify-end'>
-                          <TbCurrencyRupeeNepalese size={20}/>
-                          {b.fare}
-                        </div>
+                  <div className="flex flex-col justify-between lg:items-end gap-6 w-full lg:w-auto">
+                    <div className="text-left lg:text-right">
+                      <p className="text-xs tracking-wide text-gray-400 uppercase mb-1">
+                        Estimated Fare
+                      </p>
+                      <div className="flex items-center gap-2 text-3xl font-bold text-gray-900 lg:justify-end">
+                        <TbCurrencyRupeeNepalese size={20} />
+                        {b.fare}
                       </div>
+                    </div>
+
+                    <div className="flex gap-4 w-full lg:w-auto">
+                      <button className='flex-1 lg:flex-none px-6 py-3 rounded-xl border border-gray-300 bg-white text-gray-700 text-sm font-semibold hover:bg-gray-100 transition-all duration-200 active:scale-[0.98] disabled:opacity-50'>
+                        Reject
+                      </button>
+                      <button className='flex-1 lg:flex-none px-8 py-3 rounded-xl bg-black text-white text-sm font-semibold shadow-md hover:bg-gray-900 hover:shadow-lg transition-all '>
+                        Accept Ride
+                      </button>
+                    </div>
                   </div>
                 </div>
               </motion.div>
