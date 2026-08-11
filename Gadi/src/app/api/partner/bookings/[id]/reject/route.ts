@@ -16,12 +16,12 @@ export async function GET(req:NextRequest, context:{params:Promise<{id:string}>}
             )
         }
 
-        booking.bookingStatus = "awaiting_payment"
+        booking.bookingStatus = "rejected"
         booking.paymentDeadline = new Date(Date.now() + 5*60*1000)
         await booking.save()
 
         return NextResponse.json({ success: "true" }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ message: `accept booking error ${error}` }, { status: 500 });
+        return NextResponse.json({ message: `reject booking error ${error}` }, { status: 500 });
     }
 }

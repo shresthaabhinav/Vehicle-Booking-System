@@ -39,7 +39,7 @@ export default function page() {
     try {
       console.log(dropLat);
       const {data} = await axios.post("/api/booking/create".{
-        driverId: vehicle?.owner ,
+        driverId,
         vehicleId,
         pickUpAddress:pickUp,
         dropAddress:drop,
