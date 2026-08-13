@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import {AnimatePresence, motion} from 'motion/react'
-import { ArrowRight, Bike, Car, Clock, CreditCard, Loader2, MapPin, Navigation, ShieldCheck, Truck, XCircle } from 'lucide-react';
+import { ArrowRight, Bike, Car, CheckCircle, Clock, CreditCard, Loader2, MapPin, Navigation, ShieldCheck, Truck, XCircle } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { TbCurrencyRupeeNepalese } from 'react-icons/tb';
 import axios from 'axios';
@@ -34,12 +34,13 @@ export default function page() {
   const { Icon, label } = VEHICLE_META[vehicle]
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState<Status>("idle")
+  const [booking, setBooking] = useState<>();
 
   const handleRequestBooking = async () =>{
     setLoading(true)
     try {
       console.log(dropLat);
-      const {data} = await axios.post("/api/booking/create".{
+      const {data} = await axios.post("/api/booking/create",{
         driverId,
         vehicleId,
         pickUpAddress:pickUp,
@@ -55,6 +56,7 @@ export default function page() {
         fare,
         mobileNumber:mobile,
       })
+      setBooking(data)
       setLoading(false)
       setStatus("requested")
     } catch (error:any) {
@@ -66,8 +68,17 @@ export default function page() {
   const fetchActiveBooking = async()=>{
     try {
       const {data} = await axios.get("/api/booking/active")
-      console.log(data)
+      setBooking(data.booking)
       setStatus(data.booking.bookingStatus || data.booking)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleCancel = async ()=>{
+    try {
+      const {data} = await axios.get("/api/booking/${booking._id}/cancel")
+      console.log(data)
     } catch (error) {
       console.log(error)
     }
@@ -76,6 +87,14 @@ export default function page() {
   useEffect(()=>{
     fetchActiveBooking()
   },[])
+
+  useEffect(()=>{
+    if(status!=="awaiting_payment") return;
+    const t = setTimeout(()=>{
+      setStatus("payment")
+    },2000)
+    return ()=>{clearTimeout(t)}
+  },[status])
 
   return (
     <div className="min-h-screen bg-zinc-100 px-4 py-12">
@@ -271,7 +290,7 @@ export default function page() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.35 }}
-                    className='flex flex-col flex-1 items-center justify-center gap-6 text-center '
+                    className='flex flex-col flex-1 items-center justify-center gap-6 text-center'
                   >
                     <div className='relative'>
                       <motion.div
@@ -290,10 +309,61 @@ export default function page() {
 
                     <motion.div
                       whileTap={{ scale: 0.95 }}
+                      onClick={handleCancel}
                       className='flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 transition-colors border border-zinc-200 hover:border-zinc-400 px-4 py-2.5 rounded-xl'
                       >
                         <XCircle size={13}/> Cancel Request
                     </motion.div>
+                  </motion.div>
+                )}
+
+                {status=="awaiting_payment" && (
+                  <motion.div
+                    key="awaiting_payment"
+                    initial={{ opacity: 0, scale: 0.94 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.35 }}
+                    className='flex flex-col flex-1 items-center justify-center gap-5 text-center'
+                  >
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 260, damping: 16 }}
+                      className='w-20 h-20 rounded-full bg-zinc-100 border-2 border-zinc-200 flex items-center justify-center'
+                    >
+                      <CheckCircle size={36} className='text-zinc-900'/>
+                    </motion.div>
+
+                  <div>
+                    <h3 className='text-xl font-black text-zinc-900 mb-1'>Driver Accepted</h3>
+                    <p className='text-zinc-400 text-sm font-medium'>Preparing payment options...</p>
+                  </div>
+
+                  <div className='w-48 h-1.5 bg-zinc-100 rounded-full overflow-hidden'>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: 2 }}
+                      className='h-full bg-zinc-900 rounded-full'
+                    />
+
+                  </div>
+                  </motion.div>
+                )}
+
+                {status=="payment" && (
+                  <motion.div
+                    key="payment"
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className='flex flex-col flex-1 gap-6'
+                    >
+                      <div>
+                        
+                      </div>
                   </motion.div>
                 )}
               </AnimatePresence>
