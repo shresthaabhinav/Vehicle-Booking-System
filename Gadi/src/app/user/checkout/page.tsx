@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {AnimatePresence, motion} from 'motion/react'
 import { ArrowRight, Bike, Car, Clock, CreditCard, MapPin, Navigation, ShieldCheck, Truck } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -32,10 +32,11 @@ export default function page() {
   const vehicleId = params.get("vehicleId") || "";
   const fare = params.get("fare") || "";
   const { Icon, label } = VEHICLE_META[vehicle]
-
+  const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState<Status>("idle")
 
   const handleRequestBooking = async () =>{
+    setLoading(true)
     try {
       console.log(dropLat);
       const {data} = await axios.post("/api/booking/create".{
@@ -54,12 +55,27 @@ export default function page() {
         fare,
         mobileNumber:mobile,
       })
-
-      console.log(data)
+      setLoading(false)
+      setStatus("requested")
     } catch (error:any) {
+      setLoading(false)
       console.log(error.response.data.message)
     }
   }
+
+  const fetchActiveBooking = async()=>{
+    try {
+      const {data} = await axios.get("/api/booking/active")
+      console.log(data)
+      setStatus(data.booking.bookingStatus || data.booking)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(()=>{
+    fetchActiveBooking()
+  },[])
 
   return (
     <div className="min-h-screen bg-zinc-100 px-4 py-12">
