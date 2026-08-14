@@ -48,7 +48,7 @@ const io = new Server(server, {
   })
 
   socket.on("disconnect", async ()=>{
-    if (!socket.userId) return
+    if (!socket.userId) return; 
       await User.findByIdAndUpdate(socket.userId, {
         socketId: null,
         isOnline: false,
