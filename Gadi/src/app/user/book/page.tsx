@@ -65,7 +65,6 @@ export default function page() {
           apiKey: process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY,
           filter: "countrycode:np",
           limit: 5,
-          format: "json"
         }
       })
       let results: Place[] = (data.features ?? []).map((f: any) => ({

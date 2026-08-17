@@ -59,26 +59,26 @@ const userSchema = new mongoose.Schema(
     },
     socketId: {
       type: String,
-      default: null
+      default: null,
     },
     location: {
       type: {
         type: String,
-        enum: ["Point"]
+        enum: ["Point"],
       },
-      coordinates:[Number]
+      coordinates: [Number],
     },
-    isOnline:{
+    isOnline: {
       type: Boolean,
       default: false,
-      index: true
-    }
+      index: true,
+    },
   },
   { timestamps: true },
 );
 
-userSchema.index({location:"2dsphere"})
+userSchema.index({ location: "2dsphere" });
 
-const User = mongoose.model<IUser>("User", userSchema)
+const User = mongoose.model("User", userSchema);
 
-export default User
+export default User;
