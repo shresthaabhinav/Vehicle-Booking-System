@@ -5,6 +5,7 @@ import axios from "axios";
 import { BookingStatus, PaymentStatus } from "@/models/booking.model";
 import { Clock, Loader2, MapPin, Navigation } from "lucide-react";
 import { TbCurrencyRupeeNepalese } from "react-icons/tb";
+import { useRouter } from "next/navigation";
 
 interface IBooking {
   _id: string;
@@ -45,6 +46,7 @@ interface IBooking {
 export default function page() {
   const [bookings, setBookings] = useState<IBooking[]>([]);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const fetchPendingRequests = async () => {
     try {
@@ -61,7 +63,7 @@ export default function page() {
   const handleAccept = async (id:string) =>{
     try {
       const {data} = await axios.get(`/api/partner/bookings/${id}/accept`)
-      console.log(data)
+      router.push("/partner/bookings")
     } catch (error) {
       console.log(error)
     }
@@ -70,7 +72,7 @@ export default function page() {
   const handleReject = async (id: string) => {
     try {
       const { data } = await axios.get(`/api/partner/bookings/${id}/reject`);
-      console.log(data);
+      window.location.reload()
     } catch (error) {
       console.log(error);
     }
