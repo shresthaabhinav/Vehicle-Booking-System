@@ -93,7 +93,7 @@ export default function Nav() {
                 if (i == "Home") {
                   href = "/";
                 } else {
-                  href = `/${i.toLowerCase()}`;
+                  href = `/user/${i.toLowerCase()}`;
                 }
 
                 const active = href == pathName;

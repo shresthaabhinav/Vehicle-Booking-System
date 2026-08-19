@@ -1,13 +1,23 @@
-"use client"
-import { BookingStatus, PaymentStatus } from '@/models/booking.model';
-import { IUser } from '@/models/user.model';
-import { IVehicle } from '@/models/vehicle.model';
-import axios from 'axios'
-import { Bike, Calendar, Car, ChevronRightIcon, Loader2, MapPin, Phone, Truck, User } from 'lucide-react';
-import React, { useEffect, useState } from 'react'
-import { motion } from 'motion/react'
-import { TbCurrencyRupeeNepalese } from 'react-icons/tb';
-import { useRouter } from 'next/navigation';
+"use client";
+import { BookingStatus, PaymentStatus } from "@/models/booking.model";
+import { IUser } from "@/models/user.model";
+import { IVehicle } from "@/models/vehicle.model";
+import axios from "axios";
+import {
+  Bike,
+  Calendar,
+  Car,
+  ChevronRightIcon,
+  Loader2,
+  MapPin,
+  Phone,
+  Truck,
+  User,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { motion } from "motion/react";
+import { TbCurrencyRupeeNepalese } from "react-icons/tb";
+import { useRouter } from "next/navigation";
 
 export interface IBooking {
   user: IUser;
@@ -45,70 +55,71 @@ export interface IBooking {
 }
 
 export default function page() {
+  const [bookings, setBookings] = useState<IBooking[] | []>([]);
+  const [selectStatus, setSelectStatus] = useState("All");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-    const [bookings, setBookings] = useState<IBooking[] | []>([])
-    const [selectStatus, setSelectStatus]= useState("All")
-    const [loading, setLoading] = useState(false)
-    const router = useRouter()
-
-    useEffect(()=>{
-        const fetch = async ()=>{
-          setLoading(true)
-            try {
-                const {data} = await axios.get("/api/partner/bookings")
-                console.log(data)
-                setBookings(data)
-                setLoading(false)
-            } catch (error:any) {
-                console.log(error.response.data.message)
-                setLoading(false)
-            }
-        }
-        fetch()
-    },[])
-
-    const formatDate = (dateString: string) => {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        day: 'numeric',
-        month: 'short',
-        hour: '2-digit',
-        minute: '2-digit'
-      }).replace(',','');
-    }
-
-    const getStatusColor = (status: string) => {
-      const colors: Record<string, string> = {
-        confirmed:        "bg-emerald-50 text-emerald-700 border-emerald-200",
-        completed:        "bg-teal-50 text-teal-700 border-teal-200",
-        requested:        "bg-amber-50 text-amber-700 border-amber-200",
-        awaiting_payment: "bg-blue-50 text-blue-700 border-blue-200",
-        cancelled:        "bg-rose-50 text-rose-700 border-rose-200",
-        rejected:         "bg-red-50 text-red-700 border-red-200",
-        expired:          "bg-gray-50 text-gray-700 border-gray-200",
-      };
-      return colors[status] || "bg-gray-50 text-gray-700 border-gray-200"
-    }
-
-    const getVehicleIcon = (vehicleType?: string) => {
-      switch(vehicleType?.toLowerCase()) {
-        case 'bike':
-          return <Bike className='w-4 h-4 text-gray-400'/>;
-        case 'auto':
-          return <Car className="w-4 h-4 text-gray-400"/>;
-        case 'truck':
-          return <Truck className="w-4 h-4 text-gray-400"/>;
-        case 'loading':
-        case 'car':
-        default:
-          return <Car className="w-4 h-4 text-gray-400" />;
+  useEffect(() => {
+    const fetch = async () => {
+      setLoading(true);
+      try {
+        const { data } = await axios.get("/api/user/bookings");
+        console.log(data);
+        setBookings(data);
+        setLoading(false);
+      } catch (error: any) {
+        console.log(error.response.data.message);
+        setLoading(false);
       }
+    };
+    fetch();
+  }, []);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date
+      .toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+      .replace(",", "");
+  };
+
+  const getStatusColor = (status: string) => {
+    const colors: Record<string, string> = {
+      confirmed: "bg-emerald-50 text-emerald-700 border-emerald-200",
+      completed: "bg-teal-50 text-teal-700 border-teal-200",
+      requested: "bg-amber-50 text-amber-700 border-amber-200",
+      awaiting_payment: "bg-blue-50 text-blue-700 border-blue-200",
+      cancelled: "bg-rose-50 text-rose-700 border-rose-200",
+      rejected: "bg-red-50 text-red-700 border-red-200",
+      expired: "bg-gray-50 text-gray-700 border-gray-200",
+    };
+    return colors[status] || "bg-gray-50 text-gray-700 border-gray-200";
+  };
+
+  const getVehicleIcon = (vehicleType?: string) => {
+    switch (vehicleType?.toLowerCase()) {
+      case "bike":
+        return <Bike className="w-4 h-4 text-gray-400" />;
+      case "auto":
+        return <Car className="w-4 h-4 text-gray-400" />;
+      case "truck":
+        return <Truck className="w-4 h-4 text-gray-400" />;
+      case "loading":
+      case "car":
+      default:
+        return <Car className="w-4 h-4 text-gray-400" />;
     }
+  };
 
-
-    const filterBookings = selectStatus === "All"
-    ? bookings
-    : bookings.filter(b => b.bookingStatus === selectStatus.toLowerCase());
+  const filterBookings =
+    selectStatus === "All"
+      ? bookings
+      : bookings.filter((b) => b.bookingStatus === selectStatus.toLowerCase());
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -121,7 +132,7 @@ export default function page() {
               </div>
               <div className="">
                 <h1 className="text-2xl font-semibold text-gray-900">
-                  Partner Bookings
+                  My Bookings
                 </h1>
                 <p className="text-gray-500 text-sm mt-1">
                   {bookings.length} {bookings.length === 1 ? "ride" : "rides"}{" "}
@@ -191,7 +202,7 @@ export default function page() {
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
                           <h3 className="font-semibold text-gray-900">
-                            {b.user.name.toUpperCase() || "Customer"}
+                            {b.user.name.toUpperCase() || "Driver"}
                           </h3>
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(b.bookingStatus)}`}
@@ -202,7 +213,7 @@ export default function page() {
 
                         <div className="flex items-center gap-1 mt-1 text-xs text-gray-600">
                           <Phone className="w-3 h-3" />
-                          <span>{b.userMobileNumber}</span>
+                          <span>{b.driverMobileNumber}</span>
                         </div>
                       </div>
                     </div>
@@ -276,7 +287,7 @@ export default function page() {
                       {b.bookingStatus !== "completed" && (
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => router.push("/partner/active-ride")}
+                            onClick={() => router.push("/user/active-ride")}
                             className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-1.5 rounded-lg transition-colors"
                           >
                             <span>Details</span>

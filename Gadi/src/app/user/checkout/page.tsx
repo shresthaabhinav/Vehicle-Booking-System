@@ -5,6 +5,7 @@ import { ArrowRight, Banknote, Bike, Car, CheckCircle, Clock, CreditCard, Loader
 import { useRouter, useSearchParams } from 'next/navigation';
 import { TbCurrencyRupeeNepalese } from 'react-icons/tb';
 import axios from 'axios';
+import { getSocket } from '@/lib/socket';
 
 const VEHICLE_META: any = {
   bike: { label: "Bike", Icon: Bike },
@@ -34,7 +35,7 @@ export default function page() {
   const { Icon, label } = VEHICLE_META[vehicle]
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState<Status>("idle")
-  const [booking, setBooking] = useState<>();
+  const [booking, setBooking] = useState<any>();
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash")
 
   const handleRequestBooking = async () =>{
@@ -65,6 +66,16 @@ export default function page() {
       console.log(error.response.data.message)
     }
   }
+
+  useEffect(() => {
+      const socket = getSocket()
+      socket.on("accept-booking",(data)=>{
+        setStatus(data)
+      })
+      return ()=>{
+        socket.off("accept-booking")
+      }
+    },[])
 
   const loadRazorpayScript=()=>{
     return new Promise((resolve)=>{
