@@ -1,7 +1,7 @@
 'use client'
 import LiveRideMap from '@/components/LiveRideMap'
 import { motion } from 'motion/react'
-import { BookingStatus, IBooking } from '@/models/booking.model'
+import { BookingStatus, IBooking, PaymentStatus } from '@/models/booking.model'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Zap } from 'lucide-react'
@@ -31,6 +31,13 @@ const STATUS_LABEL: Record<BookingStatus, {label: string; sublevel: string; dot:
   expired:            {label: "Request Expired",       sublevel: "Booking timed out",            dot: "bg-orange-400"},
 }
 
+const PAYMEMT_BADGE: Record<PaymentStatus, {label: string; clas: string}> = {
+  pending: { label: "Pending", cls: "bg-amber-100 text-amber-700"    },
+  paid:    { label: "Paid",    cls: "bg-emerald-100 text-emerald-700"},
+  cash:    { label: "Cash",    cls: "bg-zinc-100 text-zinc-700"      },
+  failed:  { label: "Failed",  cls: "bg-red-100 text-red-700"        },
+}
+
 export default function page() {
   const [booking, setBooking] = useState<IBooking | null>(null)
   const [loading, setLoading] = useState(false)
@@ -42,6 +49,7 @@ export default function page() {
   const [etaToPickUp, setEtaToPickUp] = useState(0)
   const [etaToDrop, setEtaToDrop] = useState(0)
   const [status, setStatus] = useState("")
+  const [chatOpen, setChatOpen] = useState(false)
 
   useEffect(()=>{
     async function fetch(){
@@ -60,6 +68,10 @@ export default function page() {
     }
     fetch()
   },[])
+
+  const onChatToggle = () => {
+    setChatOpen(prev=>!prev)
+  }
 
   useEffect(()=>{
     if(!navigator.geolocation) return;
@@ -88,10 +100,11 @@ export default function page() {
 
   const cfg = STATUS_LABEL[booking?.bookingStatus!??"confirmed"]
   const isActive = ["confirmed", "started"].includes(status)
+  const canChat = booking?.bookingStatus === "confirmed"
   const displayEta = status === "confirmed" ? etaToPickUp : etaToDrop
   const displayDistance = status === "confirmed" ? distanceToPickUp : distanceToDrop
-
-  const panelProps = { isActive, displayDistance, displayEta, cfg, status, booking };
+  const paymentStatus = PAYMENT_BADGE[booking?.paymentStatus!??"pending"]
+  const panelProps = { isActive, displayDistance, displayEta, cfg, status, booking, paymentStatus, canChat, chatOpen, onChatToggle };
 
   return (
     <div className='h-screen w-full bg-zinc-100 flex flex-col lg:flex-row overflow-hidden'>
