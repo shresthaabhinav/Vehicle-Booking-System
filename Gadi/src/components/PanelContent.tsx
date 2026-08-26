@@ -1,5 +1,5 @@
 "use client";
-import { Clock, MessageCircle, Phone, User } from "lucide-react";
+import { Car, Clock, MessageCircle, Phone, User } from "lucide-react";
 import React from "react";
 import { TbCurrencyRupeeNepalese } from "react-icons/tb";
 import { AnimatePresence, motion } from "motion/react";
@@ -15,17 +15,9 @@ export default function PanelContent({
   paymentStatus,
   canChat,
   chatOpen,
-  onChatToggle
+  onChatToggle,
+  currentRole
 }: any) {
-
-    const {userData} = useSelector((state: RootState)=>state.user)
-    let currentRole;
-    useEffect(()=>{
-        if(userData){
-            currentRole = userData?._id === booking.driver._id ? "driver" : "user"
-            console.log(currentRole)
-        }
-    },[userData?._id])
 
   return (
     <div className="flex flex-col pt-5 pb-4 gap-3">
@@ -148,6 +140,16 @@ export default function PanelContent({
             </motion.div>
         )}
       </AnimatePresence>
+
+      {booking?.vehicle && (
+        <div className="mx-5 lg:mx-6">
+          <div className="bg-zinc-50 border border-zinc-100 rounded-2xl p-4 flex items-center gap-2">
+            <div className="w-11 h-11 rounded-xl bg-zinc-900 flex items-center justify-center flex-shrink-0">
+              <Car size={18} className="text-white"/>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

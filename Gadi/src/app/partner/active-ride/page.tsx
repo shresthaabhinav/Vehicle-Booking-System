@@ -31,7 +31,7 @@ const STATUS_LABEL: Record<BookingStatus, {label: string; sublevel: string; dot:
   expired:            {label: "Request Expired",       sublevel: "Booking timed out",            dot: "bg-orange-400"},
 }
 
-const PAYMEMT_BADGE: Record<PaymentStatus, {label: string; clas: string}> = {
+const PAYMENT_BADGE: Record<PaymentStatus, {label: string; clas: string}> = {
   pending: { label: "Pending", cls: "bg-amber-100 text-amber-700"    },
   paid:    { label: "Paid",    cls: "bg-emerald-100 text-emerald-700"},
   cash:    { label: "Cash",    cls: "bg-zinc-100 text-zinc-700"      },
@@ -104,7 +104,7 @@ export default function page() {
   const displayEta = status === "confirmed" ? etaToPickUp : etaToDrop
   const displayDistance = status === "confirmed" ? distanceToPickUp : distanceToDrop
   const paymentStatus = PAYMENT_BADGE[booking?.paymentStatus!??"pending"]
-  const panelProps = { isActive, displayDistance, displayEta, cfg, status, booking, paymentStatus, canChat, chatOpen, onChatToggle };
+  const panelProps = { isActive, displayDistance, displayEta, cfg, status, booking, paymentStatus, canChat, chatOpen, onChatToggle, currentRole:"driver" };
 
   return (
     <div className='h-screen w-full bg-zinc-100 flex flex-col lg:flex-row overflow-hidden'>

@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
         RECENT_MESSAGE
 
         Rules:
-        1. Generate only ONE reply suggestion.
+        1. Generate exact 3 reply suggestion.
         2. Keep the reply short and natural, suitable for a real-time vehicle booking chat.
         3. The reply should directly respond to the last message.
         4. Consider the user's role when generating the reply:
@@ -41,8 +41,6 @@ export async function POST(req: NextRequest) {
                 "Reply 1",
                 "Reply 2",
                 "Reply 3",
-                "Reply 4",
-                "Reply 5",
             ]
         }
 
