@@ -4,7 +4,7 @@ import { motion } from 'motion/react'
 import { BookingStatus, IBooking, PaymentStatus } from '@/models/booking.model'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Zap } from 'lucide-react'
+import { ChevronUp, Zap } from 'lucide-react'
 import PanelContent from '@/components/PanelContent'
 
 const MAP_STATUS: Record<BookingStatus, "arriving" | "ongoing" | "completed"> = {
@@ -50,6 +50,7 @@ export default function page() {
   const [etaToDrop, setEtaToDrop] = useState(0)
   const [status, setStatus] = useState("")
   const [chatOpen, setChatOpen] = useState(false)
+  const [expanded, setExpanded] = useState(false)
 
   useEffect(()=>{
     async function fetch(){
@@ -107,32 +108,39 @@ export default function page() {
   const panelProps = { isActive, displayDistance, displayEta, cfg, status, booking, paymentStatus, canChat, chatOpen, onChatToggle, currentRole:"driver" };
 
   return (
-    <div className='h-screen w-full bg-zinc-100 flex flex-col lg:flex-row overflow-hidden'>
-      <div className='relative flex-1 h-full z-0'>
+    <div className="h-screen w-full bg-zinc-100 flex flex-col lg:flex-row overflow-hidden">
+      <div className="relative flex-1 h-full z-0">
         <LiveRideMap
           driverLocation={driverPos}
           pickUpLocation={pickUpPos}
           dropLocation={dropPos}
           mapStatus={MAP_STATUS[booking?.bookingStatus!]}
-          onStatus={({distanceToPickUp, etaToPickUp, distanceToDrop, etaToDrop})=>{
-              setDistanceToPickUp(distanceToPickUp)
-              setEtaToPickUp(etaToPickUp)
-              setDistanceToDrop(distanceToDrop)
-              setEtaToDrop(etaToDrop)
+          onStatus={({
+            distanceToPickUp,
+            etaToPickUp,
+            distanceToDrop,
+            etaToDrop,
+          }) => {
+            setDistanceToPickUp(distanceToPickUp);
+            setEtaToPickUp(etaToPickUp);
+            setDistanceToDrop(distanceToDrop);
+            setEtaToDrop(etaToDrop);
           }}
-          />
+        />
 
-          <motion.div
-            initial={{ opacity: 0, y: -16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="absolute top-4 left-1/2 -translate-x-1/2 z-[500] pointer-events-none"
-          >
-            <div className='flex items-center gap-2 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-zinc-100'>
-              <span className={`w-2 h-2 rounded-full ${cfg.dot} animate-pulse`}/>
-              <span className='text-xs font-semibold tracking-wide text-zinc-900'>{cfg.label}</span>
-            </div>
-          </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="absolute top-4 left-1/2 -translate-x-1/2 z-[500] pointer-events-none"
+        >
+          <div className="flex items-center gap-2 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-zinc-100">
+            <span className={`w-2 h-2 rounded-full ${cfg.dot} animate-pulse`} />
+            <span className="text-xs font-semibold tracking-wide text-zinc-900">
+              {cfg.label}
+            </span>
+          </div>
+        </motion.div>
       </div>
 
       <motion.div
@@ -141,26 +149,75 @@ export default function page() {
         transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
         className="hidden lg:flex w-[420px] xl:w-[460px] bg-white border-l border-zinc-100 flex-overflow-hidden"
       >
-        <div className='bg-zinc-950 px-6 py-5 flex-shrink-0'>
-          <p className='text-zinc-500 text-[10px] tracking-[0.2em] uppercase font-semibold mb-1'>Driver Panel</p>
+        <div className="bg-zinc-950 px-6 py-5 flex-shrink-0">
+          <p className="text-zinc-500 text-[10px] tracking-[0.2em] uppercase font-semibold mb-1">
+            Driver Panel
+          </p>
 
-          <div className='flex items-center justify-between'>
-            <h1 className='text-white text-xl font-bold'>Active Ride</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-white text-xl font-bold">Active Ride</h1>
             {isActive && (
-              <div className='flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full'>
-                <Zap size={12} className='text-amber-400'/>
-                <span className='text-white text-xs font-semibold'>{Math.round(displayEta)} min</span>
+              <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full">
+                <Zap size={12} className="text-amber-400" />
+                <span className="text-white text-xs font-semibold">
+                  {Math.round(displayEta)} min
+                </span>
               </div>
             )}
           </div>
         </div>
 
-        <div className='flex-1 flex flex-col overflow-hidden'>
-            <div className='flex-1 overflow-y-auto scrollbar-hide'>
-              <PanelContent {...panelProps}/>
-            </div>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto scrollbar-hide">
+            <PanelContent {...panelProps} />
+          </div>
         </div>
       </motion.div>
+
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 pointer-events-none">
+        <motion.div
+          className="bg-white rounded-t-3xl shadow-2xl pointer-events-auto overflow-hidden flex flex-col"
+          animate={{ height: expanded ? "82vh" : 142 }}
+          transition={{ type: "spring", stiffness: 320, damping: 38 }}
+        >
+          <div
+            className="flex-shrink-0 cursor-pointer select-none"
+            onClick={() => setExpanded((p) => !p)}
+          >
+            <div className="pt-3 pb-1">
+              <div className="w-10 h-1 bg-zinc-200 rounded-full mx-auto" />
+            </div>
+
+            <div className="px-5 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span
+                  className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${cfg.dot}`}
+                />
+                <div>
+                  <p className="text-sm font-bold text-zinc-900 leading-tight">{cfg.label}</p>
+                  <p className='text-xs text-zinc-400 leading-tight'>{cfg.sublabel}</p>
+                </div>
+              </div>
+
+              <div className='flex items-center gap-3'>
+                {isActive && (
+                  <div className='text-right'>
+                    <p className='text-2xl font-black text-zinc-900 leading-none'>{Math.round(displayEta)}</p>
+                    <p className='text-[10px] text-zinc-400 uppercase tracking-wider'>min</p>
+                  </div>
+                )}
+                <motion.div
+                  animate={{ rotate: expanded ? 180 : 0 }}
+                  transition={{ duration: 0.28 }}
+                  className='w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center'
+                >
+                  <ChevronUp size={16} className='text-zinc-600'/>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
     </div>
-  )
+  );
 }
