@@ -6,6 +6,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { ChevronUp, Zap } from 'lucide-react'
 import PanelContent from '@/components/PanelContent'
+import { getSocket } from '@/lib/socket'
 
 const MAP_STATUS: Record<BookingStatus, "arriving" | "ongoing" | "completed"> = {
   idle:             "arriving",
@@ -76,17 +77,30 @@ export default function page() {
 
   useEffect(()=>{
     if(!navigator.geolocation) return;
+
+    const socket = getSocket();
+
     const watchId = navigator.geolocation.watchPosition((pos)=>{
       const lat = pos.coords.latitude
       const lon = pos.coords.longitude
 
       setDriverPos([lat, lon])
+      socket.emit("driver-location-update", {
+        bookingId: booking?._id, latitude: lat, longitude: lon, status: status
+      });
     },
     (error)=>{console.log("gps error",error)},
     {enableHighAccuracy: true, maximumAge: 2000, timeout: 10000}
   )
   return () => {navigator.geolocation.clearWatch(watchId)}
   },[])
+
+  useEffect(()=>{
+    const socket = getSocket()
+    socket.emit("join-ride",booking?._id)
+
+    return () => {socket.off("join-ride")}
+  },[booking?._id])
 
   if(loading){
     return (

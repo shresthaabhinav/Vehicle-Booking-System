@@ -6,6 +6,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { ChevronUp, Zap } from "lucide-react";
 import PanelContent from "@/components/PanelContent";
+import { useParams } from "next/navigation";
+import { getSocket } from "@/lib/socket";
 
 const MAP_STATUS: Record<BookingStatus, "arriving" | "ongoing" | "completed"> =
   {
@@ -92,11 +94,15 @@ export default function page() {
   const [chatOpen, setChatOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
+  const {id} = useParams()
+
   useEffect(() => {
     async function fetch() {
       setLoading(true);
       try {
-        const { data } = await axios.get("/partner/my-active");
+        const { data } = await axios.post("/api/user/active-ride",{
+          bookingId: id
+        });
         setBooking(data);
         setStatus(data.bookingStatus);
         setPickUpPos([
@@ -121,22 +127,10 @@ export default function page() {
   };
 
   useEffect(() => {
-    if (!navigator.geolocation) return;
-    const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-
-        setDriverPos([lat, lon]);
-      },
-      (error) => {
-        console.log("gps error", error);
-      },
-      { enableHighAccuracy: true, maximumAge: 2000, timeout: 10000 },
-    );
-    return () => {
-      navigator.geolocation.clearWatch(watchId);
-    };
+    const socket = getSocket()
+    socket.emit("join-ride",id)
+    
+    return () => {socket.off("join-ride")}
   }, []);
 
   if (loading) {
@@ -215,7 +209,7 @@ export default function page() {
       >
         <div className="bg-zinc-950 px-6 py-5 flex-shrink-0">
           <p className="text-zinc-500 text-[10px] tracking-[0.2em] uppercase font-semibold mb-1">
-            Driver Panel
+            User Panel
           </p>
 
           <div className="flex items-center justify-between">
