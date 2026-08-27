@@ -88,10 +88,10 @@ export default function LiveRideMap({
   const [routeToDrop, setRouteToDrop] = useState<[number, number][]>([]);
 
   useEffect(() => {
-    if (!driverLocation) return;
-    const [pLat, pLon] = pickUpLocation as [number, number];
-    const [dLat, dLon] = dropLocation as [number, number];
-    const [drLat, drLon] = driverLocation as [number, number];
+    if (!driverLocation || !pickUpLocation || !dropLocation) return;
+    const [pLat, pLon] = pickUpLocation
+    const [dLat, dLon] = dropLocation
+    const [drLat, drLon] = driverLocation
 
     const getRoute = async (
       startLat: number,

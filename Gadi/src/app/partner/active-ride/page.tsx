@@ -215,6 +215,13 @@ export default function page() {
                 </motion.div>
               </div>
             </div>
+
+            <div className='h-px bg-zinc-100 mx-5'/>
+
+          </div>
+
+          <div className='flex-1 overflow-y-auto min-h-0'>
+            <PanelContent {...panelProps}/>
           </div>
         </motion.div>
       </div>
