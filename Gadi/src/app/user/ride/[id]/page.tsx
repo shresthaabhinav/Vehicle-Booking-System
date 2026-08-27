@@ -81,9 +81,9 @@ const PAYMENT_BADGE: Record<PaymentStatus, { label: string; clas: string }> = {
 export default function page() {
   const [booking, setBooking] = useState<IBooking | null>(null);
   const [loading, setLoading] = useState(false);
-  const [driverPos, setDriverPos] = useState<[Number, Number] | null>(null);
-  const [pickUpPos, setPickUpPos] = useState<[Number, Number] | null>(null);
-  const [dropPos, setDropPos] = useState<[Number, Number] | null>(null);
+  const [driverPos, setDriverPos] = useState<[number, number] | null>(null);
+  const [pickUpPos, setPickUpPos] = useState<[number, number] | null>(null);
+  const [dropPos, setDropPos] = useState<[number, number] | null>(null);
   const [distanceToPickUp, setDistanceToPickUp] = useState(0);
   const [distanceToDrop, setDistanceToDrop] = useState(0);
   const [etaToPickUp, setEtaToPickUp] = useState(0);
