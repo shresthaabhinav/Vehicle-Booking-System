@@ -1,10 +1,10 @@
 'use client'
 import LiveRideMap from '@/components/LiveRideMap'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { BookingStatus, IBooking, PaymentStatus } from '@/models/booking.model'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { ChevronUp, Zap } from 'lucide-react'
+import { ArrowRight, ChevronUp, KeyRound, MapPin, Zap } from 'lucide-react'
 import PanelContent from '@/components/PanelContent'
 import { getSocket } from '@/lib/socket'
 
@@ -40,94 +40,175 @@ const PAYMENT_BADGE: Record<PaymentStatus, {label: string; clas: string}> = {
 }
 
 export default function page() {
-  const [booking, setBooking] = useState<IBooking | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [driverPos, setDriverPos] = useState<[number, number] | null>(null)
-  const [pickUpPos, setPickUpPos] = useState<[number, number] | null>(null)
-  const [dropPos, setDropPos] = useState<[number, number] | null>(null)
-  const [distanceToPickUp, setDistanceToPickUp] = useState(0)
-  const [distanceToDrop, setDistanceToDrop] = useState(0)
-  const [etaToPickUp, setEtaToPickUp] = useState(0)
-  const [etaToDrop, setEtaToDrop] = useState(0)
-  const [status, setStatus] = useState("")
-  const [chatOpen, setChatOpen] = useState(false)
-  const [expanded, setExpanded] = useState(false)
+  const [booking, setBooking] = useState<IBooking | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [driverPos, setDriverPos] = useState<[number, number] | null>(null);
+  const [pickUpPos, setPickUpPos] = useState<[number, number] | null>(null);
+  const [dropPos, setDropPos] = useState<[number, number] | null>(null);
+  const [distanceToPickUp, setDistanceToPickUp] = useState(0);
+  const [distanceToDrop, setDistanceToDrop] = useState(0);
+  const [etaToPickUp, setEtaToPickUp] = useState(0);
+  const [etaToDrop, setEtaToDrop] = useState(0);
+  const [status, setStatus] = useState("");
+  const [chatOpen, setChatOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
-  useEffect(()=>{
-    async function fetch(){
-      setLoading(true)
-      try {
-        const {data} = await axios.get("/partner/my-active")
-        setBooking(data)
-        setStatus(data.bookingStatus)
-        setPickUpPos([data.pickUpLocation.coordinates[1],data.pickUpLocation.coordinates[0]])
-        setDropPos([data.dropLocation.coordinates[1],data.dropLocation.coordinates[0]]);
-        setLoading(false)
-      } catch (error:any) {
-        console.error(error.response.data.message)
-        setLoading(false)
-      }
+  // Pickup OTP
+  const [otpMode, setOtpMode] = useState(false);
+  const [otp, setOtp] = useState(false);
+  const [loadingOtp, setLoadingOtp] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [otpError, setOtpError] = useState("");
+
+  // Drop OTP
+  const [dropOtpMode, setDropOtpMode] = useState(false);
+  const [dropOtp, setDropOtp] = useState("");
+  const [loadingDropOtp, setLoadingDropOtp] = useState(false);
+  const [dropOtpError, setDropOtpError] = useState("");
+
+  const handleSendPickUpOtp = async () => {
+    try {
+      const { data } = await axios.post("/api/partner/bookings/otp/pickup/send",{bookingId:booking?._id})
+      console.log(data)
+      setOtpMode(true)
+    } catch (error:any) {
+      console.log(error)
     }
-    fetch()
-  },[])
-
-  const onChatToggle = () => {
-    setChatOpen(prev=>!prev)
   }
 
-  useEffect(()=>{
-    if(!navigator.geolocation) return;
+  const handleSendDropOtp = async () => {
+    try {
+      const { data } = await axios.post("/api/partner/bookings/otp/drop/send", {bookingId: booking?._id})
+      console.log(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleVerifyPickUpOtp = async () => {
+    try {
+      const { data } = await axios.post("/api/partner/bookings/otp/pickup/verify", {bookingId: booking?._id, otp})
+      console.log(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleVerifyDropOtp = async () => {
+    try {
+      const { data } = await axios.post("/api/partner/bookings/otp/drop/verify", {bookingId: booking?._id, dropOtp})
+      console.log(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    async function fetch() {
+      setLoading(true);
+      try {
+        const { data } = await axios.get("/partner/my-active");
+        setBooking(data);
+        if(data.pickUpOtp){
+          setOtpMode(true)
+        }else{
+          setOtpMode(false)
+        }
+        setStatus(data.bookingStatus);
+        setPickUpPos([
+          data.pickUpLocation.coordinates[1],
+          data.pickUpLocation.coordinates[0],
+        ]);
+        setDropPos([
+          data.dropLocation.coordinates[1],
+          data.dropLocation.coordinates[0],
+        ]);
+        setLoading(false);
+      } catch (error: any) {
+        console.error(error.response.data.message);
+        setLoading(false);
+      }
+    }
+    fetch();
+  }, []);
+
+  const onChatToggle = () => {
+    setChatOpen((prev) => !prev);
+  };
+
+  useEffect(() => {
+    if (!navigator.geolocation) return;
 
     const socket = getSocket();
 
-    const watchId = navigator.geolocation.watchPosition((pos)=>{
-      const lat = pos.coords.latitude
-      const lon = pos.coords.longitude
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
 
-      setDriverPos([lat, lon])
-      socket.emit("driver-location-update", {
-        bookingId: booking?._id, latitude: lat, longitude: lon, status: status
-      });
-    },
-    (error)=>{console.log("gps error",error)},
-    {enableHighAccuracy: true, maximumAge: 2000, timeout: 10000}
-  )
-  return () => {navigator.geolocation.clearWatch(watchId)}
-  },[booking?._id])
+        setDriverPos([lat, lon]);
+        socket.emit("driver-location-update", {
+          bookingId: booking?._id,
+          latitude: lat,
+          longitude: lon,
+          status: status,
+        });
+      },
+      (error) => {
+        console.log("gps error", error);
+      },
+      { enableHighAccuracy: true, maximumAge: 2000, timeout: 10000 },
+    );
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, [booking?._id]);
 
-  useEffect(()=>{
-    
-    if(!booking._id) return;
+  useEffect(() => {
+    if (!booking._id) return;
 
-    const socket = getSocket()
-    socket.emit("join-ride",booking?._id)
+    const socket = getSocket();
+    socket.emit("join-ride", booking?._id);
     socket.on("driver-location", ({ latitude, longitude }) => {
       setDriverPos([latitude, longitude]);
     });
     return () => {
-      socket.off("join-ride")
-      socket.off("driver-location")
-    }
-  },[booking?._id])
+      socket.off("join-ride");
+      socket.off("driver-location");
+    };
+  }, [booking?._id]);
 
-  if(loading){
+  if (loading) {
     return (
-        <div className='h-screen w-full bg-zinc-950 flex items-center justify-center'>
-          <div className='flex flex-col items-center gap-4'>
-            <div className='w-12 h-12 rounded-full border-2 border-white/20 border-t-white animate-spin'/>
-            <p>Loading Ride...</p>
-          </div>
+      <div className="h-screen w-full bg-zinc-950 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+          <p>Loading Ride...</p>
         </div>
-    )
+      </div>
+    );
   }
 
-  const cfg = STATUS_LABEL[booking?.bookingStatus!??"confirmed"]
-  const isActive = ["confirmed", "started"].includes(status)
-  const canChat = booking?.bookingStatus === "confirmed"
-  const displayEta = status === "confirmed" ? etaToPickUp : etaToDrop
-  const displayDistance = status === "confirmed" ? distanceToPickUp : distanceToDrop
-  const paymentStatus = PAYMENT_BADGE[booking?.paymentStatus!??"pending"]
-  const panelProps = { isActive, displayDistance, displayEta, cfg, status, booking, paymentStatus, canChat, chatOpen, onChatToggle, currentRole:"driver" };
+  const cfg = STATUS_LABEL[booking?.bookingStatus! ?? "confirmed"];
+  const isActive = ["confirmed", "started"].includes(status);
+  const canChat = booking?.bookingStatus === "confirmed";
+  const displayEta = status === "confirmed" ? etaToPickUp : etaToDrop;
+  const displayDistance =
+    status === "confirmed" ? distanceToPickUp : distanceToDrop;
+  const paymentStatus = PAYMENT_BADGE[booking?.paymentStatus! ?? "pending"];
+  const panelProps = {
+    isActive,
+    displayDistance,
+    displayEta,
+    cfg,
+    status,
+    booking,
+    paymentStatus,
+    canChat,
+    chatOpen,
+    onChatToggle,
+    currentRole: "driver",
+  };
 
   return (
     <div className="h-screen w-full bg-zinc-100 flex flex-col lg:flex-row overflow-hidden">
@@ -165,6 +246,8 @@ export default function page() {
         </motion.div>
       </div>
 
+      {/* Desktop */}
+
       <motion.div
         initial={{ x: 60, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
@@ -196,6 +279,7 @@ export default function page() {
         </div>
       </motion.div>
 
+      {/* Mobile View */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 pointer-events-none">
         <motion.div
           className="bg-white rounded-t-3xl shadow-2xl pointer-events-auto overflow-hidden flex flex-col"
@@ -216,35 +300,78 @@ export default function page() {
                   className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${cfg.dot}`}
                 />
                 <div>
-                  <p className="text-sm font-bold text-zinc-900 leading-tight">{cfg.label}</p>
-                  <p className='text-xs text-zinc-400 leading-tight'>{cfg.sublabel}</p>
+                  <p className="text-sm font-bold text-zinc-900 leading-tight">
+                    {cfg.label}
+                  </p>
+                  <p className="text-xs text-zinc-400 leading-tight">
+                    {cfg.sublabel}
+                  </p>
                 </div>
               </div>
 
-              <div className='flex items-center gap-3'>
+              <div className="flex items-center gap-3">
                 {isActive && (
-                  <div className='text-right'>
-                    <p className='text-2xl font-black text-zinc-900 leading-none'>{Math.round(displayEta)}</p>
-                    <p className='text-[10px] text-zinc-400 uppercase tracking-wider'>min</p>
+                  <div className="text-right">
+                    <p className="text-2xl font-black text-zinc-900 leading-none">
+                      {Math.round(displayEta)}
+                    </p>
+                    <p className="text-[10px] text-zinc-400 uppercase tracking-wider">
+                      min
+                    </p>
                   </div>
                 )}
                 <motion.div
                   animate={{ rotate: expanded ? 180 : 0 }}
                   transition={{ duration: 0.28 }}
-                  className='w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center'
+                  className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center"
                 >
-                  <ChevronUp size={16} className='text-zinc-600'/>
+                  <ChevronUp size={16} className="text-zinc-600" />
                 </motion.div>
               </div>
             </div>
 
-            <div className='h-px bg-zinc-100 mx-5'/>
-
+            <div className="h-px bg-zinc-100 mx-5" />
           </div>
 
-          <div className='flex-1 overflow-y-auto min-h-0'>
-            <PanelContent {...panelProps}/>
+          <div className="flex-1 overflow-y-auto min-h-0">
+            <PanelContent {...panelProps} />
           </div>
+
+          <div className='flex-shrink-0 border-t border-zinc-100 bg-white px-5 py-4'>
+              <AnimatePresence mode="wait">
+                {status==="confirmed" && !otpMode && !otpVerified && !booking?.pickUpOtp && (
+                  <motion.button
+                    key="arrived"
+                    onClick={()=>{
+                      handleSendPickUpOtp()
+                    }}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    className='w-full bg-zinc-900 hover:bg-zinc-800 active:scale-[0.97] text-white py-4 rounded-2xl font-bold text-sm tracking-widest transition-all flex items-center justify-center gap-2'
+                  >
+                    <MapPin size={15}/> I have arrived at PickUp <ArrowRight size={15} className='ml-1'/>
+                  </motion.button>
+                )}
+
+                {status==="confirmed" && otpMode && !otpVerified && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                    transition={{ duration: 0.3 }}
+                    className='bg-zinc-50 border border-zinc-200 rounded-2xl overflow-hidden'
+                  >
+                    <div className='bg-zinc-950 px-4 py-3 flex items-center gap-2'>
+                      <KeyRound/>
+                      <p></p>
+                    </div>
+                  </motion.div>
+                )}
+
+              </AnimatePresence>
+          </div>
+
         </motion.div>
       </div>
     </div>
