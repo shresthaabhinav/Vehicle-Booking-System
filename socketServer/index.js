@@ -66,7 +66,14 @@ app.post("/emit",async (req, res)=>{
   })
 
   socket.on("driver-location-update", ({bookingId, latitude, longitude, status})=>{
-    io.to(`ride-{bookingId}`).emit("update")
+    io.to(`ride-${bookingId}`).emit("driver-location",{
+      latitude,
+      longitude
+    })
+  })
+
+  socket.on("chat-message", (data)=>{
+    io.to(`ride-${data.bookingId}`).emit("chat-message",data)
   })
 
   socket.on("disconnect", async ()=>{

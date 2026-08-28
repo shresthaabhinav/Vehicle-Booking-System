@@ -1,10 +1,11 @@
 'use client'
 import axios from 'axios'
 import { Send, Sparkles, X } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@reduxjs/toolkit/query'
+import { getSocket } from '@/lib/socket'
 
 type message = {
     bookingId : string,
@@ -22,9 +23,15 @@ export default function RideChat({currentRole, bookingId, userName, driverName}:
     const [userData, setUserData] = useSelector((state:RootState)=>state.user)
     const [suggestions, setSuggestions] = useState<string[]>([])
     const [showAI, setShowAI] = useState(false)
+    const messagesEndRef = useRef<HTMLDivElement>(null)
     const [aiLoading, setAiLoading] = useState(false)
 
+    useEffect(()=>{
+      messagesEndRef.current?.scrollIntoView({behavior:"smooth"})
+    },[messages])
+
     const sendMsg = async ()=>{
+      const socket = getSocket()
         try{
             const {data} = await axios.post("/api/chat/send",{
                 sender: currentRole,
@@ -32,7 +39,8 @@ export default function RideChat({currentRole, bookingId, userName, driverName}:
                 bookingId
             })
             console.log(data)
-            setMessages([...messages, data])
+            socket.emit("chat-message", data)
+
         } catch(error) {
             console.log(error)
         }
@@ -58,6 +66,15 @@ export default function RideChat({currentRole, bookingId, userName, driverName}:
 
     useEffect(()=>{
       getAllMsgs()
+    },[])
+
+    useEffect(()=>{
+      const socket = getSocket()
+      socket.on("chat-message",(data)=>{
+        setMessages(prev=>[ ...prev, data ])
+      })
+
+      return () => {socket.off("chat-message")}
     },[])
     
     const getAISuggestions = async () => {
@@ -135,8 +152,9 @@ export default function RideChat({currentRole, bookingId, userName, driverName}:
               )
             })
           )}
+          <div ref={messagesEndRef}/>
         </div>
-          
+        
         <AnimatePresence>
           {showAI && messages.length>0 && (
             <motion.div

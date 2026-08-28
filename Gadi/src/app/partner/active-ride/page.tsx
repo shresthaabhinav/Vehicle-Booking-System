@@ -93,13 +93,21 @@ export default function page() {
     {enableHighAccuracy: true, maximumAge: 2000, timeout: 10000}
   )
   return () => {navigator.geolocation.clearWatch(watchId)}
-  },[])
+  },[booking?._id])
 
   useEffect(()=>{
+    
+    if(!booking._id) return;
+
     const socket = getSocket()
     socket.emit("join-ride",booking?._id)
-
-    return () => {socket.off("join-ride")}
+    socket.on("driver-location", ({ latitude, longitude }) => {
+      setDriverPos([latitude, longitude]);
+    });
+    return () => {
+      socket.off("join-ride")
+      socket.off("driver-location")
+    }
   },[booking?._id])
 
   if(loading){

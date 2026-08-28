@@ -129,8 +129,13 @@ export default function page() {
   useEffect(() => {
     const socket = getSocket()
     socket.emit("join-ride",id)
-    
-    return () => {socket.off("join-ride")}
+    socket.on("driver-location",({latitude, longitude})=>{
+      setDriverPos([latitude, longitude])
+    })
+    return () => {
+      socket.off("join-ride")
+      socket.off("driver-location")
+    }
   }, []);
 
   if (loading) {
@@ -162,7 +167,7 @@ export default function page() {
     canChat,
     chatOpen,
     onChatToggle,
-    currentRole: "driver",
+    currentRole: "user",
   };
 
   return (
