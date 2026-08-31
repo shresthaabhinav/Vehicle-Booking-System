@@ -141,9 +141,9 @@ export default function AdminDashboard() {
             { activeTab == "vehicle" &&  <ContentList data={vehicleReviews ?? []} type={"vehicle"}/> }
           </motion.div>
         </AnimatePresence>
+      <AdminEarning/>
       </main>
 
-      <AdminEarning/>
     </div>
   );
 }
