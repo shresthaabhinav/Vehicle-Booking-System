@@ -285,7 +285,7 @@ export default function page() {
                         </span>
                       </div>
 
-                      {b.bookingStatus !== "completed" && (
+                      {(b.bookingStatus == "confirmed" || b.bookingStatus == "started" || b.bookingStatus == "completed") && (
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => router.push(`/user/ride/${b._id}`)}

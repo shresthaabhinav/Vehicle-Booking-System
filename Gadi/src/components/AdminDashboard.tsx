@@ -8,6 +8,7 @@ import TabButton from './TabButton'
 import { AnimatePresence } from 'motion/react'
 import { motion } from 'motion/react'
 import ContentList from './ContentList'
+import AdminEarning from './AdminEarning'
 
 type Stats = {
   totalApprovedPartners: number;
@@ -141,6 +142,8 @@ export default function AdminDashboard() {
           </motion.div>
         </AnimatePresence>
       </main>
+
+      <AdminEarning/>
     </div>
   );
 }
