@@ -10,6 +10,7 @@ import StatusCard from "./StatusCard";
 import ActionCard from "./ActionCard";
 import axios from "axios";
 import PricingModal from "./PricingModal";
+import PartnerEarning from "./PartnerEarning";
 
 type Step = {
   id: number;
@@ -202,22 +203,20 @@ export default function PartnerDashboard() {
           />
         )}
 
-        {activeStep==8 && vehicleData?.status=="approved" && (
+        {activeStep == 8 && vehicleData?.status == "approved" && (
           <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-black text-white rounded-3xl p-10 shadow-2xl"
-              >
-                <h2 className="text-2xl font-bold">
-                  You're Live
-                </h2>
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-black text-white rounded-3xl p-10 shadow-2xl"
+          >
+            <h2 className="text-2xl font-bold">You're Live</h2>
 
-                <button className="mt-6 bg-white text-black px-6 py-3 rounded-xl font-semibold flex items-center gap-2">
-                  Go to Bookings <ArrowRight size={16}/>
-                </button>
+            <button className="mt-6 bg-white text-black px-6 py-3 rounded-xl font-semibold flex items-center gap-2">
+              Go to Bookings <ArrowRight size={16} />
+            </button>
           </motion.div>
         )}
-
+        <PartnerEarning />
       </div>
 
       <PricingModal

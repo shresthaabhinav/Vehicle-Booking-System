@@ -13,8 +13,6 @@ import { setUserData } from "@/redux/userSlice";
 import axios from "axios";
 import { getSocket } from "@/lib/socket";
 
-const Nav_Items = ["Home", "Bookings", "About Us", "Contact"];
-
 export default function Nav() {
   const pathName = usePathname();
   const [authOpen, setAuthOpen] = useState(false);
@@ -83,7 +81,9 @@ export default function Nav() {
                   href={"/partner/pending-requests"}
                 >
                   Pending Requests
-                  <span className="absolute -top-2 -right-5 w-6 h-6 bg-white text-black text-xs rounded-full flex items-center justify-center font-bold">{pendingCount ?? 0}</span>
+                  <span className="absolute -top-2 -right-5 w-6 h-6 bg-white text-black text-xs rounded-full flex items-center justify-center font-bold">
+                    {pendingCount ?? 0}
+                  </span>
                 </Link>
                 <Link
                   className="relative text-sm font-medium text-gray-300 hover:text-white transition"
@@ -98,28 +98,7 @@ export default function Nav() {
                   Active Ride
                 </Link>
               </>
-            ) : (
-              Nav_Items.map((i, index) => {
-                let href;
-                if (i == "Home") {
-                  href = "/";
-                } else {
-                  href = `/user/${i.toLowerCase()}`;
-                }
-
-                const active = href == pathName;
-
-                return (
-                  <Link
-                    key={index}
-                    href={href}
-                    className={`text-sm font-medium transition ${active ? "text-white" : "text-gray-400 hover:text-white"}`}
-                  >
-                    {i}
-                  </Link>
-                );
-              })
-            )}
+            ) : null}
           </div>
           <div className="flex items-center gap-3 relative">
             <div className="hidden md:block relative">
@@ -154,6 +133,15 @@ export default function Nav() {
                           <p className="text-xs uppercase text-gray-500 mb-4">
                             {userData.role}
                           </p>
+                          {userData.role != "partner" && (
+                            <div
+                              className="w-full flex items-center gap-3 pl-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer"
+                              onClick={() => router.push("/user/bookings")}
+                            >
+                              Bookings
+                              <ChevronRight size={16} className="ml-auto" />
+                            </div>
+                          )}
                           {userData.role != "partner" && (
                             <div
                               className="w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl cursor-pointer"
@@ -210,61 +198,9 @@ export default function Nav() {
                 </>
               )}
             </div>
-
-            <button
-              className="md:hidden text-white"
-              onClick={() => setMenuOpen((p) => !p)}
-            >
-              {menuOpen ? <X size={26} /> : <Menu size={26} />}
-            </button>
           </div>
         </div>
       </motion.div>
-
-      <AnimatePresence>
-        {menuOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.4 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 bg-black z-30 md:hidden"
-            />
-
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2 }}
-              className="fixed top-[85px] left-1/2 -translate-x-1/2 w-[92%] bg-[#0B0B0B] rounded-2xl shadow-2xl z-40 md:hidden overflow-hidden"
-            >
-              <div className="flex flex-col divide-y divide-white/10">
-                {Nav_Items.map((i, index) => {
-                  let href;
-                  if (i == "Home") {
-                    href = "/";
-                  } else {
-                    href = `/${i.toLowerCase()}`;
-                  }
-
-                  const active = href == pathName;
-
-                  return (
-                    <Link
-                      key={index}
-                      href={href}
-                      className={"px-6 py-4 text-gray-300 hover:bg-white/5"}
-                    >
-                      {i}
-                    </Link>
-                  );
-                })}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
 
       <AnimatePresence>
         {profileOpen && userData && (
@@ -289,6 +225,17 @@ export default function Nav() {
                 <p className="text-xs uppercase text-gray-500 mb-4">
                   {userData.role}
                 </p>
+
+                {userData.role != "partner" && (
+                  <div
+                    className="w-full flex items-center gap-3 pl-3 py-3 hover:bg-gray-100 rounded-xl"
+                    onClick={() => router.push("/user/bookings")}
+                  >
+                    Bookings
+                    <ChevronRight size={16} className="ml-auto" />
+                  </div>
+                )}
+
                 {userData.role != "partner" && (
                   <div
                     className="w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl"
@@ -309,6 +256,33 @@ export default function Nav() {
                     <ChevronRight size={16} className="ml-auto" />
                   </div>
                 )}
+
+                {userData.role == "partner" && (
+                  <div className="flex flex-col">
+                    <Link
+                      className="relative text-sm font-medium text-black hover:text-gray-500 transition"
+                      href={"/partner/pending-requests"}
+                    >
+                      Pending Requests
+                      <span className="absolute -top-2 -right-5 w-6 h-6 bg-black text-black text-xs rounded-full flex items-center justify-center font-bold">
+                        {pendingCount ?? 0}
+                      </span>
+                    </Link>
+                    <Link
+                      className="relative text-sm font-medium text-black hover:text-gray-500 transition"
+                      href={"/partner/bookings"}
+                    >
+                      Bookings
+                    </Link>
+                    <Link
+                      className="relative text-sm font-medium text-black hover:text-gray-500 transition"
+                      href={"/partner/active-ride"}
+                    >
+                      Active Ride
+                    </Link>
+                  </div>
+                )}
+
                 <button
                   className="w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl mt-2"
                   onClick={handleLogout}
