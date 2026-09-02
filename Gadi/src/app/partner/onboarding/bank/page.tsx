@@ -49,7 +49,7 @@ export default function page() {
       console.log(data);
       setLoading(false);
       router.push("/");
-    } catch (error) {
+    } catch (error: any) {
       setError(error?.response?.data?.message || "something went wrong");
       console.log(error);
       setLoading(false);
