@@ -76,7 +76,7 @@ const STATUS_LABEL: Record<
   },
 };
 
-const PAYMENT_BADGE: Record<PaymentStatus, { label: string; clas: string }> = {
+const PAYMENT_BADGE: Record<PaymentStatus, { label: string; cls: string }> = {
   pending: { label: "Pending", cls: "bg-amber-100 text-amber-700" },
   paid: { label: "Paid", cls: "bg-emerald-100 text-emerald-700" },
   cash: { label: "Cash", cls: "bg-zinc-100 text-zinc-700" },
@@ -131,15 +131,17 @@ export default function page() {
 
   useEffect(() => {
     const socket = getSocket()
-    socket.emit("join-ride",id)
+    const joinRide = () => socket.emit("join-ride", id)
+    joinRide()
+    socket.on("connect", joinRide)
     socket.on("driver-location",({latitude, longitude})=>{
       setDriverPos([latitude, longitude])
     })
     return () => {
-      socket.off("join-ride")
+      socket.off("connect", joinRide)
       socket.off("driver-location")
     }
-  }, []);
+  }, [id]);
 
   if (loading) {
     return (
@@ -219,7 +221,7 @@ export default function page() {
         initial={{ x: 60, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-        className="hidden lg:flex lg:flex-col w-[420px] xl:w-[460px] bg-white border-l border-zinc-100 flex-overflow-hidden"
+        className="hidden lg:flex lg:flex-col w-[420px] xl:w-[460px] bg-white border-l border-zinc-100 overflow-hidden"
       >
         <div className="bg-zinc-950 px-6 py-5 flex-shrink-0">
           <p className="text-zinc-500 text-[10px] tracking-[0.2em] uppercase font-semibold mb-1">
@@ -270,7 +272,7 @@ export default function page() {
                     {cfg.label}
                   </p>
                   <p className="text-xs text-zinc-400 leading-tight">
-                    {cfg.sublabel}
+                    {cfg.sublevel}
                   </p>
                 </div>
               </div>

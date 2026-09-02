@@ -15,7 +15,16 @@ export async function POST(
       return Response.json({ message: "unauthorized" }, { status: 400 });
     }
     await connectDb();
-    const {rejectionReason} = await req.json()
+    
+    const { rejectionReason } = await req.json();
+
+    if (!rejectionReason || !rejectionReason.trim()) {
+      return Response.json(
+        { message: "rejection reason is required" },
+        { status: 400 },
+      );
+    }
+
     const partnerId = (await context.params).id;
     const partner = await User.findById(partnerId);
 

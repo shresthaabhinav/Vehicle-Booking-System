@@ -66,13 +66,16 @@ export default function page() {
   }
 
   const handleReject = async () => {
-    setRejectLoading(true)
+    setRejectLoading(true);
     try {
-      const { data } = await axios.get(`/api/admin/reviews/partner/${id}/reject`,{
-        rejectionReason
-      });
-      console.log(data)
-      setRejectLoading(false)
+      const { data } = await axios.post(
+        `/api/admin/reviews/partner/${id}/reject`,
+        {
+          rejectionReason,
+        },
+      );
+      console.log(data);
+      setRejectLoading(false);
       router.push("/");
     } catch (error) {
       console.log(error);

@@ -13,7 +13,14 @@ export async function POST(
       return Response.json({ message: "unauthorized" }, { status: 400 });
     }
 
-    const { reason } = await req.json()
+    const { reason } = await req.json();
+
+    if (!reason || !reason.trim()) {
+      return Response.json(
+        { message: "rejection reason is required" },
+        { status: 400 },
+      );
+    }
 
     await connectDb();
 

@@ -30,21 +30,25 @@ export default function RideChat({currentRole, bookingId, userName, driverName}:
       messagesEndRef.current?.scrollIntoView({behavior:"smooth"})
     },[messages])
 
-    const sendMsg = async ()=>{
-      const socket = getSocket()
-        try{
-            const {data} = await axios.post("/api/chat/send",{
-                sender: currentRole,
-                text,
-                bookingId
-            })
-            console.log(data)
-            socket.emit("chat-message", data)
+    const sendMsg = async () => {
+      if (!text.trim()) return;
+      const socket = getSocket();
+      const messageText = text;
+      setText("");
 
-        } catch(error) {
-            console.log(error)
-        }
-    }
+      try {
+        const { data } = await axios.post("/api/chat/send", {
+          sender: currentRole,
+          text: messageText,
+          bookingId,
+        });
+        setMessages((prev) => [...prev, data]);
+        socket.emit("chat-message", data);
+      } catch (error) {
+        console.log(error);
+        setText(messageText);
+      }
+    };
 
     const getAllMsgs = async () => {
       try {
@@ -68,14 +72,25 @@ export default function RideChat({currentRole, bookingId, userName, driverName}:
       getAllMsgs()
     },[])
 
-    useEffect(()=>{
-      const socket = getSocket()
-      socket.on("chat-message",(data)=>{
-        setMessages(prev=>[ ...prev, data ])
-      })
+    useEffect(() => {
+      const socket = getSocket();
+      const joinRide = () => socket.emit("join-ride", bookingId);
+      const onChatMessage = (data: message) => {
+        if (data.bookingId === bookingId && data.sender !== currentRole) {
+          setMessages(prev => [...prev, data]);
+          setLastMessage(data.text);
+        }
+      };
 
-      return () => {socket.off("chat-message")}
-    },[])
+      joinRide();
+      socket.on("connect", joinRide);
+      socket.on("chat-message", onChatMessage);
+
+      return () => {
+        socket.off("connect", joinRide);
+        socket.off("chat-message", onChatMessage);
+      };
+    }, [bookingId, currentRole]);
     
     const getAISuggestions = async () => {
       setAiLoading(true)
