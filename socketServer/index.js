@@ -9,20 +9,14 @@ import { Server } from "socket.io"
 import mongoose from "mongoose"
 import User from "./models/user.model.js"
 
-const connectDb = async () => {
-  try {
+const connectDb = async (params) => {
+    try {
     await mongoose.connect(mongodbUrl);
     console.log("db connected");
-
-    server.listen(port, () => {
-      console.log(`server started on port ${port}`);
-      connectDb();
-    });
-  } catch (error) {
-    console.error("MongoDB connection error:", error);
-    process.exit(1);
-  }
-};
+    } catch (error) {
+    console.log("db error");
+    }
+}
 
 const app = express()
 app.use(express.json())
@@ -91,3 +85,7 @@ app.post("/emit",async (req, res)=>{
   })
 })
 
+server.listen(port,()=>{
+    console.log("server started");
+    connectDb()
+})
