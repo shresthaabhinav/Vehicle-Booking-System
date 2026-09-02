@@ -13,22 +13,6 @@ const TYPE_CONFIG = {
   truck:   { label: "Truck",   Icon: Truck }
 };
 
-interface IVehicle{
-    owner: string,
-    type: vehicleType,
-    vehicleModel: string,
-    number: string,
-    imageUrl?: string,
-    baseFare?: number,
-    pricePerKM?: number,
-    waitingCharge?: number,
-    status: "approved" | "pending" | "rejected",
-    rejectionReason?: string,
-    isActive: boolean,
-    createdAt: Date,
-    updatedAt: Date
-}
-
 export default function VehicleCard({vehicle, distance, onBook}:{vehicle:IVehicle, distance:number | undefined, onBook:()=>void}) {
 
   const {Icon, label} = TYPE_CONFIG[vehicle.type]

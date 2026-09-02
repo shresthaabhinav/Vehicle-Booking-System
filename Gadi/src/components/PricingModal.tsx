@@ -91,9 +91,10 @@ export default function PriceModal({ open, onClose, data }: PropsType) {
                   id="imageLabel"
                   hidden
                   onChange={(e) => {
-                    if (e.target.files[0]) {
-                      setImage(e.target.files[0]);
-                      setPreview(URL.createObjectURL(e.target.files[0]));
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setImage(file);
+                      setPreview(URL.createObjectURL(file));
                     }
                   }}
                 />

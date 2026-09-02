@@ -4,7 +4,7 @@ import { Send, Sparkles, X } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useSelector } from 'react-redux'
-import { RootState } from '@reduxjs/toolkit/query'
+import { RootState } from "@/redux/store";
 import { getSocket } from '@/lib/socket'
 
 type message = {

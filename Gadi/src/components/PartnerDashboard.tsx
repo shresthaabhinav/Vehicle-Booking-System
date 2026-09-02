@@ -11,6 +11,7 @@ import ActionCard from "./ActionCard";
 import axios from "axios";
 import PricingModal from "./PricingModal";
 import PartnerEarning from "./PartnerEarning";
+import { IVehicle } from "@/models/vehicle.model";
 
 type Step = {
   id: number;
@@ -37,7 +38,7 @@ export default function PartnerDashboard() {
   const router = useRouter()
   const [requestLoading, setRequestLoading]=useState(false)
   const [showPricing, setShowPricing]=useState(false)
-  const [vehicleData, setVehicleData]=useState<IVehicle | null>()
+  const [vehicleData, setVehicleData]=useState<IVehicle | null>(null)
 
   useEffect(() => {
     if (userData) {
