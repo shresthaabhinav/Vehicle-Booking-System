@@ -189,7 +189,7 @@ export default function page() {
           pickUpLocation={pickUpPos}
           dropLocation={dropPos}
           mapStatus={MAP_STATUS[booking?.bookingStatus!]}
-          onStatus={({
+          onStats={({
             distanceToPickUp,
             etaToPickUp,
             distanceToDrop,

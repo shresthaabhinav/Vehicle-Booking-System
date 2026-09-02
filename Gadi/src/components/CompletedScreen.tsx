@@ -6,7 +6,7 @@ import { CheckCircle2, User } from 'lucide-react'
 import { TbCurrencyRupeeNepalese } from 'react-icons/tb'
 import { useRouter } from 'next/navigation'
 
-const PAYMENT_BADGE: Record<any, { label: string; clas: string }> = {
+const PAYMENT_BADGE: Record<any, { label: string; cls: string }> = {
   pending: { label: "Pending", cls: "bg-amber-100 text-amber-700" },
   paid: { label: "Paid", cls: "bg-emerald-100 text-emerald-700" },
   cash: { label: "Cash", cls: "bg-zinc-100 text-zinc-700" },

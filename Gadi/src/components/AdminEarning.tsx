@@ -1,9 +1,9 @@
 'use client'
 import axios from 'axios'
-import { BarChart, BarChart2, Star, TrendingDown, TrendingUp, Zap } from 'lucide-react'
+import { BarChart2, Star, TrendingDown, TrendingUp, Zap } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 
 type Earning = {
   date: string,

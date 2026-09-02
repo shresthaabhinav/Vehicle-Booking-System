@@ -57,7 +57,7 @@ export default function page() {
         setIsMicOn(!isMicOn)
     }
 
-    const handleApprove =async (action:string) =>{
+    const handleApprove = async () => {
       setALoading(true)
       try{
         const { data } = await axios.post("/api/admin/video-kyc/complete",{roomId, action:"approved"})
@@ -70,7 +70,7 @@ export default function page() {
       }
     }
 
-    const handleReject =async (action:string) =>{
+    const handleReject = async () => {
       setRLoading(true)
       try{
         const { data } = await axios.post("/api/admin/video-kyc/complete",{roomId, action:"rejected",reason})
@@ -90,7 +90,7 @@ export default function page() {
     }
     setLoading(true)
 
-    const displayName = userData.role == "admin" ? "Admin" : `${userData?.name} (${userData?.email})`
+    const displayName = userData?.role == "admin" ? "Admin" : `${userData?.name} (${userData?.email})`
 
     try{
         const { ZegoUIKitPrebuilt } = await import('@zegocloud/zego-uikit-prebuilt')
