@@ -1,5 +1,4 @@
 "use client";
-import LiveRideMap from "@/components/LiveRideMap";
 import { motion } from "motion/react";
 import { BookingStatus, IBooking, PaymentStatus } from "@/models/booking.model";
 import axios from "axios";
@@ -9,6 +8,9 @@ import PanelContent from "@/components/PanelContent";
 import { useParams } from "next/navigation";
 import { getSocket } from "@/lib/socket";
 import CompletedScreen from "@/components/CompletedScreen";
+import dynamic from 'next/dynamic';
+
+const LiveRideMap = dynamic(() => import("@/components/LiveRideMap"), { ssr: false })
 
 const MAP_STATUS: Record<BookingStatus, "arriving" | "ongoing" | "completed"> =
   {
@@ -152,7 +154,7 @@ export default function page() {
 
   if(status==="completed" && booking){
     return(
-      <CompletedScreen booking={booking} role="user/>
+      <CompletedScreen booking={booking} role="user"/>
     )
   }
 
@@ -217,7 +219,7 @@ export default function page() {
         initial={{ x: 60, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-        className="hidden lg:flex w-[420px] xl:w-[460px] bg-white border-l border-zinc-100 flex-overflow-hidden"
+        className="hidden lg:flex lg:flex-col w-[420px] xl:w-[460px] bg-white border-l border-zinc-100 flex-overflow-hidden"
       >
         <div className="bg-zinc-950 px-6 py-5 flex-shrink-0">
           <p className="text-zinc-500 text-[10px] tracking-[0.2em] uppercase font-semibold mb-1">

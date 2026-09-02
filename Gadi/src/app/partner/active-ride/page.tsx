@@ -1,5 +1,4 @@
 "use client";
-import LiveRideMap from "@/components/LiveRideMap";
 import { AnimatePresence, motion } from "motion/react";
 import { BookingStatus, IBooking, PaymentStatus } from "@/models/booking.model";
 import axios from "axios";
@@ -8,6 +7,9 @@ import { ArrowRight, ChevronUp, KeyRound, MapPin, Navigation, Zap } from "lucide
 import PanelContent from "@/components/PanelContent";
 import { getSocket } from "@/lib/socket";
 import CompletedScreen from "@/components/CompletedScreen";
+import dynamic from 'next/dynamic';
+
+const LiveRideMap = dynamic(() => import("@/components/LiveRideMap"), { ssr: false })
 
 const MAP_STATUS: Record<BookingStatus, "arriving" | "ongoing" | "completed"> =
   {
@@ -174,6 +176,12 @@ export default function page() {
       setLoading(true);
       try {
         const { data } = await axios.get("/partner/my-active");
+
+        if(!data){
+          setLoading(false)
+          setBooking(null)
+          return
+        }
         setBooking(data);
         
         setStatus(data.bookingStatus);
@@ -245,10 +253,18 @@ export default function page() {
       <div className="h-screen w-full bg-zinc-950 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full border-2 border-white/20 border-t-white animate-spin" />
-          <p>Loading Ride...</p>
+          <p className="text-white/40 text-sm tracking-widest uppercase font-medium">Loading Ride...</p>
         </div>
       </div>
     );
+  }
+
+  if(booking==null){
+    return (
+    <div className="bg-black w-full h-screen flex justify-center items-center text-[20px] text-white">
+      No Active ride found!
+    </div>
+    )
   }
 
   if(status==="completed" && booking){

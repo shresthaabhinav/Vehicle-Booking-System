@@ -20,7 +20,7 @@ export default function RideChat({currentRole, bookingId, userName, driverName}:
     const [messages, setMessages] = useState<message[]>([])
     const [lastMessage, setLastMessage] = useState("")
     const [text, setText] = useState("")
-    const [userData, setUserData] = useSelector((state:RootState)=>state.user)
+    const userData = useSelector((state:RootState)=>state.user)
     const [suggestions, setSuggestions] = useState<string[]>([])
     const [showAI, setShowAI] = useState(false)
     const messagesEndRef = useRef<HTMLDivElement>(null)

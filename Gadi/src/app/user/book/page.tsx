@@ -67,8 +67,8 @@ export default function page() {
           limit: 5,
         }
       })
-      let results: Place[] = (data.features ?? []).map((f: any) => ({
-        id: String(f.properties.osm_id),
+      let results: Place[] = (data.features ?? []).map((f: any, idx: number) => ({
+        id: f.properties.place_id ?? `${f.properties.lat}-${f.properties.lon}-${idx}`,
         name: f.properties.name,
         city: f.properties.city,
         state: f.properties.state,

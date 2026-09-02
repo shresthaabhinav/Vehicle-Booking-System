@@ -1,7 +1,6 @@
 "use client";
 import axios from "axios";
 import {
-  BarChart,
   BarChart2,
   Star,
   TrendingDown,
@@ -10,13 +9,13 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Bar, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
 type Earning = {
   date: string;
   earnings: number;
 };
-
+ 
 export default function AdminEarning() {
   const [earningData, setEarningData] = useState<Earning[]>([]);
 

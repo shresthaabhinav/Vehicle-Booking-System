@@ -111,7 +111,9 @@ export async function GET(req:NextRequest){
         if(vehicle){
           return Response.json(vehicle, { status: 200 })
         }else{
-          return null
+          return Response.json(
+              { message: "vehicle not found" },
+              { status: 400 });
         }
 
     }catch(error){

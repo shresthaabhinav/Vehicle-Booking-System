@@ -87,7 +87,10 @@ export async function GET(req:NextRequest){
                 ,{ status: 200 }
         )
         }else{
-            return null
+            return Response.json(
+                { message: "bank details not found" },
+                { status: 400 }
+            )
         }
 
     }catch(error){
