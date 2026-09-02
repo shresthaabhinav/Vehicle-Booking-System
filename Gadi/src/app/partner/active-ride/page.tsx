@@ -235,7 +235,7 @@ export default function page() {
   }, [booking?._id]);
 
   useEffect(() => {
-    if (!booking._id) return;
+    if (!booking?._id) return;
 
     const socket = getSocket();
     socket.emit("join-ride", booking?._id);

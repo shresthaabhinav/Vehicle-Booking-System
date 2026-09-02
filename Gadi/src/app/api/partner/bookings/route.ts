@@ -18,7 +18,11 @@ export async function GET(req: NextRequest){
             );
         }
 
-        const driver = User.findOne({email:session.user.email})
+        const driver = await User.findOne({email:session.user.email})
+
+        if (!driver) {
+            return NextResponse.json({ message: "partner not found" }, { status: 404 });
+        }
 
         const bookings = await Booking.find({driver:driver._id}).populate("user driver vehicle").sort({createdAt: 1})
         console.log(bookings)
