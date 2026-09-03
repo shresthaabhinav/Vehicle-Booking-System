@@ -57,7 +57,7 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto h-16 px-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Image
-              src={"/Logo.png"}
+              src={"/pogo.png"}
               alt="logo"
               width={44}
               height={44}
