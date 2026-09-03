@@ -17,8 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vehicle Booking Platform",
-  description: "Vehicle Booking Platform",
+  title: "Vehicle Booking Platform | Abhinav Shrestha",
+  description:
+    "A modern vehicle booking platform that allows users to easily browse vehicles, book rides, and manage their trips through a simple and intuitive interface.",
 };
 
 export default function RootLayout({
