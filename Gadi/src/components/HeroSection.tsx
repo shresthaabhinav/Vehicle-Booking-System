@@ -54,7 +54,7 @@ export default function HeroSection({onAuthRequired}:{onAuthRequired:()=>void}) 
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="mt-12 px-10 py-4 bg-white text-black rounded-full font-semibold shadow-xl"
+          className="mt-12 px-10 py-4 bg-white text-black rounded-full font-semibold shadow-xl cursor-pointer"
           onClick={() => {
             !userData ? onAuthRequired() : router.push("/user/book");
           }}
