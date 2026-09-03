@@ -11,7 +11,7 @@ export default function PublicHome() {
     return (
     <>
     <HeroSection onAuthRequired={()=>setAuthOpen(true)}/>
-    <VehicleSlider/>
+    <VehicleSlider onAuthRequired={()=>setAuthOpen(true)}/>
     <AuthModal open={authOpen} onClose={()=>setAuthOpen(false)}/>
     </>
   )
