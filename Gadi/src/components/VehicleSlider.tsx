@@ -9,6 +9,7 @@ import {
   Truck,
 } from "lucide-react";
 import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
 const VEHICLE_CATEGORIES = [
@@ -53,6 +54,7 @@ const VEHICLE_CATEGORIES = [
 export default function VehicleSlider() {
   const [hovered, setHovered] = useState<number | null>(null);
   const sliderRef = useRef<HTMLDivElement>(null)
+  const router = useRouter();
 
   const scroll = (dir: "left"|"right")=>{
     if(!sliderRef.current) return
@@ -138,6 +140,7 @@ export default function VehicleSlider() {
                   }}
                   onHoverStart={() => setHovered(i)}
                   onHoverEnd={() => setHovered(null)}
+                  onClick={() => router.push("/user/book")}
                   whileHover={{ y: -8 }}
                   className="group relative min-w-[220px] sm:min-w-[260px] flex-shrink-0 cursor-pointer"
                 >
@@ -153,52 +156,57 @@ export default function VehicleSlider() {
                     className="relative rounded-3xl border p-6 sm:p-7 overflow-hidden h-full"
                   >
                     <motion.div
-                    animate={{
-                      backgroundColor: isHovered ? "rgb(255,255,255,0.12)" : "#f4f4f5",
-                      color: isHovered ? "#ffffff" : "#71717a",
-                      boxShadow: isHovered
-                        ? "rgba(255,255,255,0.15)"
-                        : "e4e4e7",
-                    }}
-                    className="inline-flex items-center gap-1.5 border text-[9px] font-black uppercase tracking-[0.18em] px-2.5 py-1.5 rounded-full mb-5 transition-colors"
+                      animate={{
+                        backgroundColor: isHovered
+                          ? "rgb(255,255,255,0.12)"
+                          : "#f4f4f5",
+                        color: isHovered ? "#ffffff" : "#71717a",
+                        boxShadow: isHovered
+                          ? "rgba(255,255,255,0.15)"
+                          : "e4e4e7",
+                      }}
+                      className="inline-flex items-center gap-1.5 border text-[9px] font-black uppercase tracking-[0.18em] px-2.5 py-1.5 rounded-full mb-5 transition-colors"
                     >
-                    
-                      <Sparkles size={8}/>
+                      <Sparkles size={8} />
                       {c.tag}
                     </motion.div>
 
                     <motion.div
-                    animate={{
-                      backgroundColor: isHovered ? "rgba(255, 255, 255, 0.1)" : "#f4f4f5",
-                      borderColor: isHovered ? "rgba(255, 255, 255, 0.15)" : "#e4e4e7",
-                    }}
-                    className="w-14 h-14 rounded-2xl border flex items-center justify-center mb-5 transition-colors"
+                      animate={{
+                        backgroundColor: isHovered
+                          ? "rgba(255, 255, 255, 0.1)"
+                          : "#f4f4f5",
+                        borderColor: isHovered
+                          ? "rgba(255, 255, 255, 0.15)"
+                          : "#e4e4e7",
+                      }}
+                      className="w-14 h-14 rounded-2xl border flex items-center justify-center mb-5 transition-colors"
                     >
                       <motion.div
-                      animate={{ color: isHovered ? "#ffffff" : "#3f3f46" }}
-                      transition={{ duration: 0.2 }}
+                        animate={{ color: isHovered ? "#ffffff" : "#3f3f46" }}
+                        transition={{ duration: 0.2 }}
                       >
-                        <c.Icon size={24} strokeWidth={1.4}/>
+                        <c.Icon size={24} strokeWidth={1.4} />
                       </motion.div>
-
                     </motion.div>
 
                     <motion.h3
-                    animate={{ color: isHovered ? "#ffffff" : "#09090b" }}
-                    transition={{ duration: 0.2 }}
-                    className="text-lg font-black tracking-tight leading-none mb-2"
+                      animate={{ color: isHovered ? "#ffffff" : "#09090b" }}
+                      transition={{ duration: 0.2 }}
+                      className="text-lg font-black tracking-tight leading-none mb-2"
                     >
                       {c.title}
                     </motion.h3>
 
                     <motion.p
-                    animate={{ color: isHovered ? "rgba(255,255,255,0.5)" : "#a1a1aa" }}
-                    transition={{ duration: 0.2 }}
-                    className="text-xs font-medium leading-relaxed"
+                      animate={{
+                        color: isHovered ? "rgba(255,255,255,0.5)" : "#a1a1aa",
+                      }}
+                      transition={{ duration: 0.2 }}
+                      className="text-xs font-medium leading-relaxed"
                     >
                       {c.desc}
                     </motion.p>
-
                   </motion.div>
                 </motion.div>
               );
